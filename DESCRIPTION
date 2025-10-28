@@ -1,0 +1,24 @@
+Package: mirrorstoolkit
+Type: Package
+Title: Toolkit for biomedical paper output preparation
+Version: 0.1.0
+Authors@R: person("Yihao", "Li", email = "alexliyihao@gmail.com",
+  role = c("aut", "cre"), comment = c(ORCID = "0009-0009-8722-3437"))
+Maintainer: Yihao Li <alexliyihao@gmail.com>
+Description: The code accumulated in the practice for most often used 
+    functionalities in biomedical studies. 
+License: `use_mit_license()`
+Encoding: UTF-8
+LazyData: true
+Imports:
+	rlang (>= 1.1.4),
+  dplyr (>= 1.1.4),
+  plyr (>= 1.8.9),
+  tidyr (>= 1.3.1),
+  tibble (>= 3.2.1),
+  magrittr (>= 2.0.3)
+RoxygenNote: 7.3.3
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
