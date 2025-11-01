@@ -21,6 +21,6 @@ Imports:
 RoxygenNote: 7.3.3
 Suggests: 
     knitr,
-    Polychrome (>= 1.5.4) knitr),
+    Polychrome,
     rmarkdown
 VignetteBuilder: knitr
