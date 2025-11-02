@@ -3,12 +3,13 @@
 #' A function cleans column format for a Manhattan plot, in which "phenotype" and "coding" should be factor, "pos" and "p-value" should be numerical, formal name should be character
 #'
 #' @param data, data.frame, The table working on
-#' @param pos, string, the name of column of position of the variant
+#' @param pos, str, the name of column of position of the variant
 #' @param phenotype, str, the name of column of phenotype the variant associated to
 #' @param p_value, str, the name of column of p-values
-#' @param formal_name, str, the name of column of formal name of each variant
-#' @param coding, str, the name of column of exonic vs intronic, currently not used
-#' @param phenotype_list, vector of str, the list of phenotypes which is put into consideration
+#' @param formal_name, optional str, the name of column of formal name of each variant
+#' @param coding, optional str, (currently not used) the name of column of exonic vs intronic,
+#' @param phenotype_list, optional vector of str, the list of phenotypes which is put into consideration
+#'
 #' @return data.frame, the table cleaned
 manhattan_data_clean = function(
     data,
@@ -51,43 +52,6 @@ manhattan_data_clean = function(
   return(for_figure)
 }
 
-#' Create a non-white color palette for ggplot2 based on Polychrome::glasbey.colors
-#'
-#' Generate a color palette for ggplot2 with specified number of color, white is intentionally removed.
-#'
-#' @param num_color, int, the number of color need
-#' @return list of character, the color list
-create_multi_color_palette = function(num_color){
-  rlang::check_installed("Polychrome", reason = "to use `Polychrome::glasbey.colors()`")
-  palette_table = Polychrome::glasbey.colors(num_color+1)
-  names(palette_table) <- NULL
-  palette_table = palette_table[palette_table != "#FFFFFF"]
-  return(palette_table)
-}
-
-#' Wrapper creating a distinguishable, non-white color palette for ggplot2 based on Polychrome::glasbey.colors
-#'
-#' Generate a color palette for ggplot2 with specified number of color, white is intentionally removed, added codes dealt with 1 or 2 color(s).
-#'
-#' @param num_color, int, the number of color need
-#' @return list of character, the color list
-#' @export
-distinguishable_palette = function(num_color){
-  if (num_color == 1){
-    palette_color = "black"
-  } else if (num_color == 2){
-    palette_color = c("skyblue2", "black")
-  } else if (num_color <= 31){
-    palette_color = create_multi_color_palette(num_color = num_color)
-  } else {
-    stop(
-      sprintf(
-        'The color palette cannot support more than 31 colors, has %d now',
-        num_color))
-  }
-  return(palette_color)
-}
-
 #' Wrapper for a Manhattan plot
 #'
 #' A wrapper function cleans column format for a Manhattan plot
@@ -97,12 +61,13 @@ distinguishable_palette = function(num_color){
 #' @param phenotype, str, the name of column of phenotype the variant associated to
 #' @param p_value, str, the name of column of p-values
 #' @param p_value_threshold, float, the threshold for significance, default 0.05
-#' @param formal_name, str, the name of column of formal name of each variant, if not specified, will use pos
-#' @param coding, str, the name of column of exonic vs intronic, currently not used
-#' @param phenotype_list, vector of str, the list of phenotypes which is put into consideration
-#' @param highlight_region, list of vector of str in list(c(start, end)...) format, the list of highlighted region
-#' @param palette_color, list of colors used for different phenotypes
+#' @param formal_name, optional str, the name of column of formal name of each variant, if not specified, will use pos
+#' @param coding, optional str, (currently not used), the name of column of exonic vs intronic,
+#' @param phenotype_list, optional vector of str, the list of phenotypes which is put into consideration
+#' @param highlight_region, optional list of vector of str, in list(c(start, end)...) format, the list of highlighted region
+#' @param palette_color, list or str, pre-specfied colors used for different phenotypes
 #' @param coord_ratio, float, the coordinate ratio for the figure
+#'
 #' @return ggplot2 instance, the Manhattan plot
 #' @export
 manhattan_plot = function(
@@ -127,13 +92,12 @@ manhattan_plot = function(
     coding = coding,
     phenotype_list = phenotype_list)
 
-  if (is.null(palette_color)){
-    num_phenotype = for_figure %>%
-      dplyr::pull("phenotype") %>%
-      unique() %>%
-      length()
-    palette_color = distinguishable_palette(num_color = num_phenotype)
-  }
+    palette_color = distinguishable_palette(
+      num_color = for_figure %>%
+        dplyr::pull(!!rlang::sym(phenotype)) %>%
+        dplyr::n_distinct(),
+      pre_specified_palette = palette_color
+      )
 
   significant_snps = for_figure %>%
     dplyr::filter((!!rlang::sym(p_value)) < p_value_threshold)
@@ -154,7 +118,7 @@ manhattan_plot = function(
     }
   }
   g = g + ggplot2::geom_point(
-    mapping = aes(
+    mapping = ggplot2::aes(
       x = pos,
       y = -log10((!!rlang::sym(p_value))),
       color = phenotype
@@ -173,7 +137,7 @@ manhattan_plot = function(
     ggnewscale::new_scale_fill()+
     ggrepel::geom_label_repel(
       data = significant_snps,
-      mapping = aes(
+      mapping = ggplot2::aes(
         label=(!!rlang::sym(formal_name)),
         x = (!!rlang::sym(pos)),
         y = -log10((!!rlang::sym(p_value)))
@@ -186,11 +150,11 @@ manhattan_plot = function(
     ggplot2::theme_bw() +
     ggplot2::scale_fill_grey(drop=TRUE) +
     ggplot2::theme(
-      panel.border = element_blank(),
-      panel.grid.major.x = element_blank(),
-      panel.grid.minor.x = element_blank(),
-      axis.text = element_text(color = "black"),
-      legend.key.size = unit(0.4, 'cm')
+      panel.border = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+      panel.grid.minor.x = ggplot2::element_blank(),
+      axis.text = ggplot2::element_text(color = "black"),
+      legend.key.size = grid::unit(0.4, 'cm')
     )+
     ggplot2::ylab(sprintf("-log(%s)", p_value))+
     ggplot2::scale_y_continuous(
