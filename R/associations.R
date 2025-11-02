@@ -13,7 +13,7 @@ linear_regression = function(data, variable, response, adjustments, mode = "tabl
   if (variable %in% adjustments){
     adjustments = adjustments[!adjustments %in% variable]
   }
-  output = stats::lm(reformulate(
+  output = stats::lm(stats::reformulate(
     response = response,
     c(variable, adjustments, 1)),
     data = data,
@@ -46,7 +46,7 @@ OLS_wrapper_ = function(data, response, adjustments, variable_of_interest, varia
       response = response,
       mode = "table")
   }
-  result_table = do.call(rbind, result) %>%
+  result_table = base::do.call(rbind, result) %>%
     as.data.frame() %>%
     magrittr::set_colnames(c("Effect Size", "P-value")) %>%
     magrittr::set_rownames(variable_of_interest_formal_name)
@@ -87,7 +87,7 @@ OLS_wrapper = function(data, response, adjustments, by=NULL, variable_of_interes
   }
   output = data %>%
     dplyr::group_by(dplyr::across(tidyr::all_of(by))) %>%
-    do(OLS_wrapper_(
+    dplyr::do(OLS_wrapper_(
       response = response,
       data = .data,
       adjustments = adjustments_,
@@ -112,11 +112,11 @@ logistic_regression = function(data, variable, response, adjustments, mode = "ta
   if (variable %in% adjustments){
     adjustments = adjustments[!adjustments %in% variable]
   }
-  output = stats::glm(reformulate(
+  output = stats::glm(stats::reformulate(
     response = response,
     c(variable, adjustments, 1)),
     data = data,
-    binomial(link = "logit")
+    stats::binomial(link = "logit")
   )
   if (mode == "summary"){
     return(output %>% summary())
@@ -147,7 +147,7 @@ logistic_wrapper_ = function(data, response, adjustments, variable_of_interest,v
       mode = "table")
   }
 
-  result_table = do.call(rbind, result) %>%
+  result_table = base::do.call(rbind, result) %>%
     as.data.frame() %>%
     magrittr::set_colnames(c("Effect Size", "P-value")) %>%
     magrittr::set_rownames(variable_of_interest_formal_name)
@@ -191,7 +191,7 @@ logistic_wrapper = function(data, response, adjustments, by = NULL, variable_of_
   }
   output = data %>%
     dplyr::group_by(dplyr::across(tidyr::all_of(by))) %>%
-    do(logistic_wrapper_(
+    dplyr::do(logistic_wrapper_(
       response = response,
       data = .data,
       adjustments = adjustments_,
