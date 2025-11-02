@@ -17,17 +17,17 @@ manhattan_data_clean(
 \arguments{
 \item{data, }{data.frame, The table working on}
 
-\item{pos, }{string, the name of column of position of the variant}
+\item{pos, }{str, the name of column of position of the variant}
 
 \item{phenotype, }{str, the name of column of phenotype the variant associated to}
 
 \item{p_value, }{str, the name of column of p-values}
 
-\item{formal_name, }{str, the name of column of formal name of each variant}
+\item{formal_name, }{optional str, the name of column of formal name of each variant}
 
-\item{coding, }{str, the name of column of exonic vs intronic, currently not used}
+\item{coding, }{optional str, (currently not used) the name of column of exonic vs intronic,}
 
-\item{phenotype_list, }{vector of str, the list of phenotypes which is put into consideration}
+\item{phenotype_list, }{optional vector of str, the list of phenotypes which is put into consideration}
 }
 \value{
 data.frame, the table cleaned

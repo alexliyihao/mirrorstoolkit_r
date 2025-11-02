@@ -9,7 +9,7 @@ generate_continuous_IQR_output(variable, df, by)
 \arguments{
 \item{variable}{str, The name of column in table df}
 
-\item{df}{the table working on}
+\item{df}{data.frame, the table working on}
 
 \item{by}{str, stratification variable name}
 }
@@ -17,5 +17,6 @@ generate_continuous_IQR_output(variable, df, by)
 data.frame, the characteristic data median(IQR), when by has and only has 2 classes, run a Mann Whitney U test
 }
 \description{
-a function extract median(IQR) format from a column named variable from table df, when by has and only has 2 classes, run a Mann Whitney U test
+Extract median(IQR) format from a column named variable from table df,
+when "by" has and only has 2 classes, run a Mann-Whitney U test
 }

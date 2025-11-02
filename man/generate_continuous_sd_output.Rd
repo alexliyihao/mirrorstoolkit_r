@@ -4,16 +4,22 @@
 \alias{generate_continuous_sd_output}
 \title{Characteristics for normality distributed variable}
 \usage{
-generate_continuous_sd_output(variable, df, by)
+generate_continuous_sd_output(variable, df, by, normal_policy = "wilcox")
 }
 \arguments{
-\item{variable}{The name of column in table df}
+\item{variable}{str, The name of column in table df}
 
-\item{df}{the table working on}
+\item{df}{data.frame, the table working on}
+
+\item{by}{str, stratification variable name}
+
+\item{normal_policy}{str, if "wilcox", run stats::wilcox.test, if "t-test", run stats::t.test, default "wilcox" for it has relaxed assumptions}
 }
 \value{
 data.frame, the characteristic data mean(sd), when by has and only has 2 classes, run a Mann Whitney U test
 }
 \description{
-A function extract mean(sd) format from a column named variable from table df, when by has and only has 2 classes, run a Mann Whitney U test (I didn't deploy 2 sample t-test for I cannot assume sample size and variance)
+A function extract mean(sd) format from a column named variable from table df,
+when "by" has and only has 2 classes, run a Mann Whitney U test or two sample t-test
+user can specify normal_policy = "wilcox" or "t-test"
 }

@@ -7,9 +7,9 @@
 generate_boolean_ratio_output(variable, df, by)
 }
 \arguments{
-\item{variable}{The name of column in table df}
+\item{variable}{str, The name of column in table df}
 
-\item{df}{the table working on}
+\item{df}{data.frame, the table working on}
 
 \item{by}{str, stratification variable name}
 }

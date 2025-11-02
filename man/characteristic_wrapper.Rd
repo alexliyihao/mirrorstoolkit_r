@@ -4,7 +4,13 @@
 \alias{characteristic_wrapper}
 \title{Single column inspector}
 \usage{
-characteristic_wrapper(data, variable_list, by, mode = "boolean")
+characteristic_wrapper(
+  data,
+  variable_list,
+  by,
+  mode = "boolean",
+  normal_policy = "wilcox"
+)
 }
 \arguments{
 \item{data}{data.frame, the data.frame working on}
@@ -13,11 +19,13 @@ characteristic_wrapper(data, variable_list, by, mode = "boolean")
 
 \item{by}{character, the column name used for stratifying}
 
-\item{mode}{character, the mode generating result, can be "boolean", "continuous_sd', "continuous_IQR"}
+\item{mode}{character, the mode generating result, can be "boolean", "continuous_sd", "continuous_IQR"}
+
+\item{normal_policy}{str, for "continuous_sd" mode, if "wilcox", run stats::wilcox.test, if "t-test", run stats::t.test}
 }
 \value{
 data.frame, the cleaned result
 }
 \description{
-a wrapper function cleaning the format from generated statistic
+Wrapper function cleaning the format of generated statistic
 }

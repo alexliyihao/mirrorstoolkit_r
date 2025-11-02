@@ -10,7 +10,8 @@ characteristic_table_generator(
   boolean_list,
   sd_list,
   IQR_list,
-  order = NULL
+  order = NULL,
+  normal_policy = "wilcox"
 )
 }
 \arguments{
@@ -24,11 +25,13 @@ characteristic_table_generator(
 
 \item{IQR_list}{character vector, the column name which is treated as non-normal distributed continuous variable}
 
-\item{order}{optional character vector, if specified, the row will follow the order provided}
+\item{order}{optional character vector, if specified, the rows will follow the order provided}
+
+\item{normal_policy}{str, for variables in sd_list, if "wilcox", run stats::wilcox.test, if "t-test", run stats::t.test}
 }
 \value{
 data.frame, the cleaned result
 }
 \description{
-A wrapper function cleaning the format from generated statistic
+Wrapper function cleaning the format of generated statistic
 }

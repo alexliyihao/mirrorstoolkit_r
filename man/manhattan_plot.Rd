@@ -29,15 +29,15 @@ manhattan_plot(
 
 \item{p_value_threshold, }{float, the threshold for significance, default 0.05}
 
-\item{formal_name, }{str, the name of column of formal name of each variant, if not specified, will use pos}
+\item{formal_name, }{optional str, the name of column of formal name of each variant, if not specified, will use pos}
 
-\item{coding, }{str, the name of column of exonic vs intronic, currently not used}
+\item{coding, }{optional str, (currently not used), the name of column of exonic vs intronic,}
 
-\item{phenotype_list, }{vector of str, the list of phenotypes which is put into consideration}
+\item{phenotype_list, }{optional vector of str, the list of phenotypes which is put into consideration}
 
-\item{highlight_region, }{list of vector of str in list(c(start, end)...) format, the list of highlighted region}
+\item{highlight_region, }{optional list of vector of str, in list(c(start, end)...) format, the list of highlighted region}
 
-\item{palette_color, }{list of colors used for different phenotypes}
+\item{palette_color, }{list or str, pre-specfied colors used for different phenotypes}
 
 \item{coord_ratio, }{float, the coordinate ratio for the figure}
 }
