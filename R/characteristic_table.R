@@ -244,6 +244,7 @@ characteristic_table_generator = function(
     order=NULL,
     normal_policy="wilcox"
 ){
+  data = data %>% dplyr::mutate(!!rlang::sym(by):= !!rlang::sym(by) %>% as.character())
   boolean = characteristic_wrapper(
     data = data,
     variable_list = boolean_list,
