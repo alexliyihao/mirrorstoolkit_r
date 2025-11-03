@@ -189,24 +189,30 @@ characteristic_wrapper = function(
     mode = "boolean",
     normal_policy = "wilcox"){
   result_lists = list()
-  for (i in variable_list){
-    if (mode == "boolean"){
+  data = data %>% dplyr::mutate(!!rlang::sym(by):= !!rlang::sym(by) %>% as.character())
+  if (mode == "boolean"){
+    for (i in variable_list){
       result_lists[[i]] = generate_boolean_ratio_output(
         variable = i,
         df = data,
         by = by)
+      }
     } else if (mode == "continuous_sd"){
-      result_lists[[i]] = generate_continuous_sd_output(
-        variable = i,
-        df = data,
-        by = by,
-        normal_policy = normal_policy)
+      for (i in variable_list){
+        result_lists[[i]] = generate_continuous_sd_output(
+          variable = i,
+          df = data,
+          by = by,
+          normal_policy = normal_policy)
+        }
     } else if (mode == "continuous_IQR"){
-      result_lists[[i]] = generate_continuous_IQR_output(
-        variable = i,
-        df = data,
-        by = by)
-    } }
+      for (i in variable_list){
+        result_lists[[i]] = generate_continuous_IQR_output(
+          variable = i,
+          df = data,
+          by = by)
+      }
+    }
   output = result_lists %>%
     purrr::reduce(dplyr::full_join, by = by) %>%
     tibble::column_to_rownames(by) %>%
