@@ -21,7 +21,8 @@ Imports:
     magrittr,
     ggplot2 (>= 3.5.1),
     data.table (>= 1.16.2),
-    purrr (>= 1.1.0)
+    purrr (>= 1.1.0),
+    forcats (>= 1.0.0)
 RoxygenNote: 7.3.3
 Suggests: 
     knitr,
@@ -31,4 +32,4 @@ Suggests:
     ggnewscale,
     ggrepel
 VignetteBuilder: knitr
-License: MIT + file LICENSE
+License: MIT
