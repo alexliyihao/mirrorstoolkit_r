@@ -268,3 +268,21 @@ characteristic_table_generator = function(
     return(characteristic_table[order,])
   )
 }
+
+
+#' Multi-column Summary
+#'
+#' Wrapper function output multiple column base::summary() result into data.frame
+#' I really cannot understand why R returns that in that weird way.
+#'
+#' @param data data.frame, the data.frame working on
+#'
+#' @return data.frame, the cleaned result
+#' @export
+multi_line_summary = function(data){
+  base::do.call(
+    base::cbind,
+    base::lapply(data, base::summary)) %>%
+    base::t() %>%
+    base::as.data.frame()
+}
