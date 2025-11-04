@@ -13,6 +13,7 @@ Description: The code accumulated in the practice for most often used
 Encoding: UTF-8
 LazyData: true
 Imports:
+    stats,
     rlang,
     dplyr (>= 1.1.4),
     plyr (>= 1.8.9),

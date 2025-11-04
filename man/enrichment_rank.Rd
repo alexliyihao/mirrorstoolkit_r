@@ -6,7 +6,7 @@
 \usage{
 enrichment_rank(
   data,
-  formal_name,
+  formal_name_table,
   id = NULL,
   save_name_col = NULL,
   formal_name_col = NULL,
@@ -17,7 +17,7 @@ enrichment_rank(
 \arguments{
 \item{data}{data.frame carries the enrichment}
 
-\item{formal_name}{data.frame, the table including the formal name and save name of the output}
+\item{formal_name_table}{data.frame, the table including the formal name and save name of the output}
 
 \item{id}{optional str, the column name in data referring to the subject id, by default the first column of data}
 
@@ -33,5 +33,5 @@ enrichment_rank(
 a list with two element, "visualization" is a ggplot2 instance as a scatter plot, "data" is the source data
 }
 \description{
-A wrapper cleaning the output from
+A wrapper cleaning the output from Python pipeline (TODO)
 }

@@ -1,9 +1,9 @@
 #' Distribution illustration for proteomics/lipidomics, etc
 #'
-#' A wrapper cleaning the output from
+#' A wrapper cleaning the output from Python pipeline (TODO)
 #'
 #' @param data data.frame carries the enrichment
-#' @param formal_name data.frame, the table including the formal name and save name of the output
+#' @param formal_name_table data.frame, the table including the formal name and save name of the output
 #' @param id optional str, the column name in data referring to the subject id, by default the first column of data
 #' @param save_name_col optional str, the column name in formal_name, taking the save_name from pipeline output
 #' @param formal_name_col optional str, the column name in formal_name, taking the formal name in illustration
@@ -13,7 +13,7 @@
 #' @export
 enrichment_rank = function(
     data,
-    formal_name,
+    formal_name_table,
     id = NULL,
     save_name_col = NULL,
     formal_name_col = NULL,
