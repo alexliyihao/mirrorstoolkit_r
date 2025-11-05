@@ -1,6 +1,8 @@
+utils::globalVariables(c("variable", "p_value", "normality"))
 #' Shapiro-Wilk test on each variable
 #'
 #' For a data.frame, run Shapiro-Wilk test on each column, if a "by" is specified, it will run a stratified Shapiro-wilk test by this column
+#' @importFrom rlang .data
 #'
 #' @param data, data.frame, the data table to be tested
 #' @param by, optional str, the column by which data will be stratified

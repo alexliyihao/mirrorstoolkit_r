@@ -1,3 +1,4 @@
+utils::globalVariables(c("count", "median","q1", "q3", "sd"))
 #' Characteristics for boolean variable
 #'
 #' A function extract boolean 1/total(percentage) format from a column named variable from table df, when by has and only has 2 classes, run a chi-square test

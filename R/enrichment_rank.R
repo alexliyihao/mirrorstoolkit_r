@@ -1,3 +1,4 @@
+utils::globalVariables(c("value"))
 #' Distribution illustration for proteomics/lipidomics, etc
 #'
 #' A wrapper cleaning the output from Python pipeline (TODO)
@@ -24,10 +25,10 @@ enrichment_rank = function(
     id = colnames(data)[1] # id is the first column of data
   }
   if (is.null(save_name_col)){
-    save_name_col =  colnames(formal_name)[1] # save_name_col is the first column of formal_name
+    save_name_col =  colnames(formal_name_table)[1] # save_name_col is the first column of formal_name
   }
   if (is.null(formal_name_col)){
-    formal_name_col = colnames(formal_name)[2] # formal_name_col is the second column of formal_name
+    formal_name_col = colnames(formal_name_table)[2] # formal_name_col is the second column of formal_name
   }
   if (sort_policy == "median"){
     sort_policy = stats::median
@@ -45,14 +46,14 @@ enrichment_rank = function(
         !!rlang::sym(save_name_col))
     )
 
-  df = abundances %>%
+  df = data %>%
     tidyr::pivot_longer(
       -c(id),
       names_to = "enrichments",
       values_to = "value") %>%
     dplyr::mutate(
       value = value %>% tidyr::replace_na(0),
-      enrichments = enrichments %>%
+      enrichments = .data$enrichments %>%
         plyr::mapvalues(
           from = formal_name_table %>% dplyr::pull(save_name_col),
           to = formal_name_table %>% dplyr::pull(formal_name_col)
@@ -64,18 +65,18 @@ enrichment_rank = function(
   if (scale == "raw"){
     g = ggplot2::ggplot(data = df)+
       ggplot2::geom_point(
-        mapping = aes(
-          x = value,
-          y = enrichments))
+        mapping = ggplot2::aes_string(
+          x = "value",
+          y = "enrichments"))
   } else if(scale == "logged"){
     g = ggplot2::ggplot(
       data = df %>%
         dplyr::mutate(logged_enrichment = base::log10(value + 1))
     )+
       ggplot2::geom_point(
-        mapping = aes(
-          x = logged_enrichment,
-          y = enrichments))+
+        mapping = ggplot2::aes_string(
+          x = "logged_enrichment",
+          y = "enrichments"))+
       ggplot2::xlab("log(value)")
   }
 
