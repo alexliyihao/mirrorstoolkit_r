@@ -1,3 +1,4 @@
+utils::globalVariables(c("Effect Size"))
 #' Ordinary Linear Regression
 #'
 #' A wrapper creating linear regression formula and clean the output
@@ -56,24 +57,22 @@ OLS_wrapper_ = function(data, response, adjustments, variable_of_interest, varia
 #' Ordinary Linear Regression wrapper with multi variable of interest and stratification
 #'
 #' A wrapper running multiple linear_regression() for a list of variables of interest, stratification function provided
-#'
+#' @importFrom rlang .data
 #' @param data data.frame the table working on
 #' @param response str, the name of column of target variable in table data
 #' @param adjustments vector of str, the list of adjustment variables in the table data
 #' @param by str, the name of column of stratified variable in table data
 #' @param variable_of_interest vector of str, the names of columns of interested variable in table data
-#' @param variable_of_interest_formal_name vector of str, the output names of interested variable in result
+#' @param variable_of_interest_formal_name optional vector of str, the output names of interested variable in result
+#'
 #' @return data.frame, one variable in variable_of_interest as a row, with it's beta and p-value
 #' @export
-OLS_wrapper = function(data, response, adjustments, by=NULL, variable_of_interest = NULL,variable_of_interest_formal_name = NULL){
-  if (is.null(variable_of_interest)){
-    variable_of_interest = transformed_variable_list
-    variable_of_interest_formal_name = variable_list_formal_from_transform
-  } else {
-    if (is.null(variable_of_interest_formal_name)){
-      variable_of_interest_formal_name = variable_of_interest
-    }
+OLS_wrapper = function(data, response, adjustments, variable_of_interest, by=NULL, variable_of_interest_formal_name = NULL){
+
+  if (is.null(variable_of_interest_formal_name)){
+    variable_of_interest_formal_name = variable_of_interest
   }
+
   if (is.null(by)){
     return(OLS_wrapper_(
       response = response,
@@ -157,7 +156,7 @@ logistic_wrapper_ = function(data, response, adjustments, variable_of_interest,v
 #' Logistics Linear Regression wrapper with multi variable of interest and stratification
 #'
 #' A wrapper running multiple linear_regression() for a list of variables of interest, stratification function provided
-#'
+#' @importFrom rlang .data
 #' @param data data.frame the table working on
 #' @param response str, the name of column of target variable in table data
 #' @param adjustments vector of str, the list of adjustment variables in the table data
@@ -167,14 +166,11 @@ logistic_wrapper_ = function(data, response, adjustments, variable_of_interest,v
 #' @return data.frame, one variable in variable_of_interest as a row, with it's beta and p-value
 #' @export
 logistic_wrapper = function(data, response, adjustments, by = NULL, variable_of_interest = NULL,variable_of_interest_formal_name = NULL){
-  if (is.null(variable_of_interest)){
-    variable_of_interest = transformed_variable_list
-    variable_of_interest_formal_name = variable_list_formal_from_transform
-  } else {
-    if (is.null(variable_of_interest_formal_name)){
-      variable_of_interest_formal_name = variable_of_interest
-    }
+
+  if (is.null(variable_of_interest_formal_name)){
+    variable_of_interest_formal_name = variable_of_interest
   }
+
   if (is.null(by)){
     output = logistic_wrapper_(
       response = response,

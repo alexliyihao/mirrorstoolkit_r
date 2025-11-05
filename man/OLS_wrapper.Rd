@@ -8,8 +8,8 @@ OLS_wrapper(
   data,
   response,
   adjustments,
+  variable_of_interest,
   by = NULL,
-  variable_of_interest = NULL,
   variable_of_interest_formal_name = NULL
 )
 }
@@ -20,11 +20,11 @@ OLS_wrapper(
 
 \item{adjustments}{vector of str, the list of adjustment variables in the table data}
 
-\item{by}{str, the name of column of stratified variable in table data}
-
 \item{variable_of_interest}{vector of str, the names of columns of interested variable in table data}
 
-\item{variable_of_interest_formal_name}{vector of str, the output names of interested variable in result}
+\item{by}{str, the name of column of stratified variable in table data}
+
+\item{variable_of_interest_formal_name}{optional vector of str, the output names of interested variable in result}
 }
 \value{
 data.frame, one variable in variable_of_interest as a row, with it's beta and p-value
