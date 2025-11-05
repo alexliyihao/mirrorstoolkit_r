@@ -92,7 +92,7 @@ OLS_wrapper = function(data, response, adjustments, variable_of_interest, by=NUL
       adjustments = adjustments_,
       variable_of_interest = variable_of_interest,
       variable_of_interest_formal_name = variable_of_interest_formal_name) %>%
-        tibble::rownames_to_column())
+        tibble::rownames_to_column("variable"))
   return(output)
 }
 
@@ -193,9 +193,9 @@ logistic_wrapper = function(data, response, adjustments, by = NULL, variable_of_
       adjustments = adjustments_,
       variable_of_interest = variable_of_interest,
       variable_of_interest_formal_name = variable_of_interest_formal_name) %>%
-        tibble::rownames_to_column()
-    )%>%
+        tibble::rownames_to_column("variable")
+    ) %>%
     dplyr::mutate(`Odd Ratio` = base::exp(`Effect Size`)) %>%
-    dplyr::select(c("Effect Size","Odd Ratio","P-value"))
+    dplyr::select(c("variable","Effect Size","Odd Ratio","P-value"))
   return(output)
 }
