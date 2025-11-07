@@ -16,4 +16,127 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(mirrorstoolkit)
+library(dplyr)
+library(readxl)
 ```
+
+```{r}
+df = readxl::read_excel(
+  "/Users/alexli/Library/CloudStorage/OneDrive-ColumbiaUniversityIrvingMedicalCenter/Calciphylaxis/cleaned_data/merged_final_dataset.xlsx") %>% 
+  dplyr::mutate(
+    `Lp(a) (nmol/L)` = `Lp(a) (nmol/L)` %>% as.numeric()) %>% 
+  dplyr::filter(Race %in% c("AF", "EU"))
+```
+
+```{r}
+df = df %>% dplyr::mutate(
+  `LDL (calc) mg/dL` = mirrorstoolkit::compute_nih_ldl(
+    tchol = `Chol mg/dL`,
+    hdl = `HDL mg/dL`,
+    trig = `Trig mg/dL`))
+```
+
+# For two group result
+
+
+```{r}
+mirrorstoolkit::inspect_distribution(
+  data = df, 
+  variable = c(
+    "Albumin", 
+    "Calcium",
+    "Smoking",
+    "LDL (calc) mg/dL",
+    "Lp(a) (nmol/L)"),
+  by = "Race"
+  )
+```
+
+```{r}
+table_1_by_race = mirrorstoolkit::characteristic_table_generator(
+  data = df,
+  by = "Race",
+  boolean_list = c("Smoking"),
+  sd_list = c("Calcium","LDL (calc) mg/dL"),
+  IQR_list = c("Albumin","Lp(a) (nmol/L)"),
+  order = c(
+    "Albumin", 
+    "Calcium",
+    "LDL (calc) mg/dL",
+    "Lp(a) (nmol/L)",
+    "Smoking"),
+  normal_policy = "t-test"
+)
+```
+
+
+```{r}
+table_1_by_race %>% 
+  dplyr::mutate(p_value = p_value %>% as.numeric()) %>% 
+  dplyr::filter(p_value < 0.05)
+```
+# For multi group result
+
+```{r}
+df = df %>% dplyr::mutate(
+  Calciphylaxis_str = Calciphylaxis %>% plyr::mapvalues(c(0,1), c("control", "disease")),
+  group = paste(`Race`, `Calciphylaxis_str`, sep = "_"))
+
+df$group %>% unique()
+```
+```{r}
+mirrorstoolkit::inspect_distribution(
+  data = df, 
+  variable = c(
+    "Albumin", 
+    "Calcium",
+    "Smoking",
+    "LDL (calc) mg/dL",
+    "Lp(a) (nmol/L)"),
+  by = "group"
+  )
+```
+
+```{r}
+table_1_by_group = mirrorstoolkit::characteristic_table_generator(
+  data = df,
+  by = "group",
+  boolean_list = c("Smoking"),
+  sd_list = c("Calcium","LDL (calc) mg/dL"),
+  IQR_list = c("Albumin","Lp(a) (nmol/L)"),
+  order = c(
+    "Albumin", 
+    "Calcium",
+    "LDL (calc) mg/dL",
+    "Lp(a) (nmol/L)",
+    "Smoking"),
+  normal_policy = "t-test"
+)
+```
+
+```{r}
+table_1_by_group %>% 
+  dplyr::mutate(p_value = p_value %>% as.numeric()) %>% 
+  dplyr::filter(p_value < 0.05)
+```
+```{r}
+pairwise_t_test_report(
+  data = df, 
+  variable = c("Calcium"), 
+  by = "group"
+)
+```
+```{r}
+pairwise_wilcox_report(
+  data = df, 
+  variable = c("Albumin"), 
+  by = "group"
+)
+```
+```{r}
+pairwise_boolean_report(
+  data = df, 
+  variable = c("Smoking"), 
+  by = "group")
+```
+
