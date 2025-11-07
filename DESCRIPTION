@@ -32,6 +32,9 @@ Suggests:
     ggpubr,
     ggnewscale,
     ggrepel,
-    visNetwork
+    visNetwork,
+    ggsignif,
+    broom,
+    scales
 VignetteBuilder: knitr
 License: MIT + file LICENSE
