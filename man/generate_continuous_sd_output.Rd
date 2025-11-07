@@ -13,7 +13,9 @@ generate_continuous_sd_output(variable, df, by, normal_policy = "wilcox")
 
 \item{by}{str, stratification variable name}
 
-\item{normal_policy}{str, if "wilcox", run stats::wilcox.test, if "t-test", run stats::t.test, default "wilcox" for it has relaxed assumptions}
+\item{normal_policy}{str, default "wilcox",for it has relaxed assumptions
+* if "wilcox", run stats::wilcox.test(2 categories) or stats::kruskal.test(3+)
+* if "t-test", run stats::t.test(2 categories), or stats::aov(3+)}
 }
 \value{
 data.frame, the characteristic data mean(sd), when by has and only has 2 classes, run a Mann Whitney U test

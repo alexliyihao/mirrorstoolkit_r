@@ -44,14 +44,12 @@ generate_boolean_ratio_output = function(variable, df, by){
   ) %>% magrittr::set_colnames(
     c(by,
       variable))
-  # If the "by" column only gives 2 class, run a chisq.test
-  # it should be okay with more than two but all other functions can only work with two,
-  # I don't want to mess the table format
-  if (df %>% dplyr::select(by) %>% dplyr::n_distinct() == 2){
+  # If the "by" column gives more than 1 class, run a chisq.test
+  if (df %>% dplyr::select(by) %>% dplyr::n_distinct() >= 2){
     subtable = df %>% dplyr::select(tidyr::all_of(c(by, variable))) %>% table()
     chisquare_p = stats::chisq.test(subtable,simulate.p.value = TRUE)$p.value
     output = output %>% tibble::add_row(
-      !!by := "p-value",
+      !!by := "p_value",
       !!variable := sprintf("%.4e", chisquare_p))
   }
   return(output)
@@ -94,18 +92,26 @@ generate_continuous_IQR_output = function(variable, df, by){
   ) %>% magrittr::set_colnames(
     c(by,
       variable))
-  # If the "by" column only gives 2 class, run a wilcox.test (Mann-Whittney U test)
-  if (df %>% dplyr::select(by) %>% dplyr::n_distinct() == 2){
+
+  n_by = df %>% dplyr::select(by) %>% dplyr::n_distinct()
+  if (n_by > 1){
     subtable = df %>%
       dplyr::select(tidyr::all_of(c(by, variable))) %>%
-      dplyr::mutate(by = by %>% as.factor())
-    wilcox_p = stats::wilcox.test(
-      paste("`",variable,"`", "~", "`",by,"`", collapse = "", sep = "") %>% stats::as.formula(),
-      data = subtable,
-      exact = FALSE)$p.value
+      dplyr::mutate(!!rlang::sym(by) := !!rlang::sym(by) %>% base::factor())
+    if (n_by == 2){# If the "by" column only gives 2 class, run a wilcox.test (Mann-Whittney U test)
+      p = stats::wilcox.test(
+        base::paste("`",variable,"`", "~", "`",by,"`", collapse = "", sep = "") %>% stats::as.formula(),
+        data = subtable,
+        exact = FALSE)$p.value
+    } else {# If the "by" column have more than 2 class, run a kruskal.test (Kruskal-Wallis rank sum test)
+      p = stats::kruskal.test(
+        x = subtable %>% dplyr::pull(variable),
+        g = subtable %>% dplyr::pull(by),
+        exact = FALSE)$p.value
+    }
     output = output %>% tibble::add_row(
-      !!by := "p-value",
-      !!variable := sprintf("%.4e", wilcox_p))
+      !!by := "p_value",
+      !!variable := sprintf("%.4e", p))
   }
   return(output)
 }
@@ -119,9 +125,12 @@ generate_continuous_IQR_output = function(variable, df, by){
 #' @param variable str, The name of column in table df
 #' @param df data.frame, the table working on
 #' @param by str, stratification variable name
-#' @param normal_policy str, if "wilcox", run stats::wilcox.test, if "t-test", run stats::t.test, default "wilcox" for it has relaxed assumptions
+#' @param normal_policy str, default "wilcox",for it has relaxed assumptions
+#' * if "wilcox", run stats::wilcox.test(2 categories) or stats::kruskal.test(3+)
+#' * if "t-test", run stats::t.test(2 categories), or stats::aov(3+)
 #'
 #' @return data.frame, the characteristic data mean(sd), when by has and only has 2 classes, run a Mann Whitney U test
+#' @export
 generate_continuous_sd_output = function(variable, df, by, normal_policy = "wilcox"){
   output = df %>% dplyr::select(
     tidyr::all_of(c(by, variable)))%>%
@@ -149,26 +158,42 @@ generate_continuous_sd_output = function(variable, df, by, normal_policy = "wilc
   # or two-sample t.test without same sample size assumptions (Welch's t-test)
   # most of the times my data cannot support the sample size or perfect normality
   # thus wilcox.test is default, t-test option is given here
-  if (df %>% dplyr::select(by) %>% dplyr::n_distinct() == 2){
+
+  n_by = df %>% dplyr::select(by) %>% dplyr::n_distinct()
+  if (n_by > 1){
     subtable = df %>%
       dplyr::select(tidyr::all_of(c(by, variable))) %>%
-      dplyr::mutate(by = by %>% as.factor())
-    if (normal_policy == "wilcox"){
-      p_value = stats::wilcox.test(
-        paste("`",variable,"`", "~", "`",by,"`", collapse = "", sep = "") %>% stats::as.formula(),
-        data = subtable,
-        exact = FALSE)$p.value
-    } else if (normal_policy == "t-test") {
-      p_value = stats::t.test(
-        paste("`",variable,"`", "~", "`",by,"`", collapse = "", sep = "") %>% stats::as.formula(),
-        data = subtable,
-        exact = FALSE)$p.value
-    }
+      dplyr::mutate(!!rlang::sym(by) := !!rlang::sym(by) %>% base::factor())
+    if (n_by == 2){# If the "by" column only gives 2 class, run a wilcox.test (Mann-Whittney U test)
+      if (normal_policy == "wilcox"){
+        p = stats::wilcox.test(
+          base::paste("`",variable,"`", "~", "`",by,"`", collapse = "", sep = "") %>% stats::as.formula(),
+          data = subtable,
+          exact = FALSE)$p.value
+        } else if (normal_policy == "t-test") {
+          p = stats::t.test(
+            paste("`",variable,"`", "~", "`",by,"`", collapse = "", sep = "") %>% stats::as.formula(),
+            data = subtable,
+            exact = FALSE)$p.value
+        }
+      } else {# If the "by" column have more than 2 class, run a kruskal.test (Kruskal-Wallis rank sum test)
+        if (normal_policy == "wilcox"){
+          p = stats::kruskal.test(
+            x = subtable %>% dplyr::pull(variable),
+            g = subtable %>% dplyr::pull(by),
+            exact = FALSE)$p.value
+        } else if (normal_policy == "t-test"){
+          aov_fit = stats::aov(
+            base::paste("`",variable,"`", "~", "`",by,"`", collapse = "", sep = "") %>% stats::as.formula(),
+            data = subtable)
+          p = summary(aov_fit)[[1]][1, 5]
+        }
+      }
     output = output %>% tibble::add_row(
-      !!by := "p-value",
-      !!variable := sprintf("%.4e", p_value))
-  }
-  return(output)
+      !!by := "p_value",
+      !!variable := sprintf("%.4e", p))
+    }
+    return(output)
 }
 
 #' Single column inspector
