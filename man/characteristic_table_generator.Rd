@@ -6,10 +6,10 @@
 \usage{
 characteristic_table_generator(
   data,
-  by,
-  boolean_list,
-  sd_list,
-  IQR_list,
+  by = NULL,
+  boolean_list = NULL,
+  sd_list = NULL,
+  IQR_list = NULL,
   order = NULL,
   normal_policy = "wilcox"
 )
@@ -19,11 +19,11 @@ characteristic_table_generator(
 
 \item{by}{character, the column name used for stratifying}
 
-\item{boolean_list}{character vector, the column name which is treated as boolean variable}
+\item{boolean_list}{optional character vector, the column name which is treated as boolean variable}
 
-\item{sd_list}{character vector, the column name which is treated as normal distributed continuous variable}
+\item{sd_list}{optional character vector, the column name which is treated as normal distributed continuous variable}
 
-\item{IQR_list}{character vector, the column name which is treated as non-normal distributed continuous variable}
+\item{IQR_list}{optional character vector, the column name which is treated as non-normal distributed continuous variable}
 
 \item{order}{optional character vector, if specified, the rows will follow the order provided}
 
