@@ -36,6 +36,7 @@ Suggests:
     ggsignif,
     broom,
     scales,
-    readxl
+    readxl,
+    devtools
 VignetteBuilder: knitr
 License: MIT + file LICENSE
