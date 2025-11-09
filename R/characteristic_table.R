@@ -16,13 +16,14 @@ generate_boolean_ratio_output = function(variable, df, by){
     dplyr::summarize(
       ones = sum(!!rlang::sym(variable) == 1, na.rm = TRUE),
       count = sum(!is.na(!!rlang::sym(variable))),
-      output = paste(c(ones,
-                       "/",
-                       count,
-                       "(",
-                       (ones/count * 100) %>% round(2),
-                       "%)"),
-                     collapse = "", sep = "") ) %>%
+      output = paste(
+        c(ones,
+         "/",
+         count,
+         "(",
+         (ones/count * 100) %>% round(2),
+         "%)"),
+       collapse = "", sep = "") ) %>%
     dplyr::select(tidyr::all_of(c(by, "output")))
   # add a separate overall column, which is often required
   overall = df %>% dplyr::pull(variable)
@@ -174,7 +175,8 @@ generate_continuous_sd_output = function(variable, df, by, normal_policy = "wilc
           p = stats::t.test(
             paste("`",variable,"`", "~", "`",by,"`", collapse = "", sep = "") %>% stats::as.formula(),
             data = subtable,
-            exact = FALSE)$p.value
+            exact = FALSE,
+            var.equal = FALSE)$p.value
         }
       } else {# If the "by" column have more than 2 class, run a kruskal.test (Kruskal-Wallis rank sum test)
         if (normal_policy == "wilcox"){
@@ -207,7 +209,6 @@ generate_continuous_sd_output = function(variable, df, by, normal_policy = "wilc
 #' @param normal_policy str, for "continuous_sd" mode, if "wilcox", run stats::wilcox.test, if "t-test", run stats::t.test
 #'
 #' @return data.frame, the cleaned result
-#' @export
 characteristic_wrapper = function(
     data,
     variable_list,
@@ -215,7 +216,8 @@ characteristic_wrapper = function(
     mode = "boolean",
     normal_policy = "wilcox"){
   result_lists = list()
-  data = data %>% dplyr::mutate(!!rlang::sym(by):= !!rlang::sym(by) %>% as.character())
+  data = data %>% dplyr::mutate(
+    !!rlang::sym(by):= !!rlang::sym(by) %>% as.character())
   if (mode == "boolean"){
     for (i in variable_list){
       result_lists[[i]] = generate_boolean_ratio_output(
@@ -253,9 +255,9 @@ characteristic_wrapper = function(
 #'
 #' @param data data.frame, the data.frame working on
 #' @param by character, the column name used for stratifying
-#' @param boolean_list character vector, the column name which is treated as boolean variable
-#' @param sd_list character vector, the column name which is treated as normal distributed continuous variable
-#' @param IQR_list character vector, the column name which is treated as non-normal distributed continuous variable
+#' @param boolean_list optional character vector, the column name which is treated as boolean variable
+#' @param sd_list optional character vector, the column name which is treated as normal distributed continuous variable
+#' @param IQR_list optional character vector, the column name which is treated as non-normal distributed continuous variable
 #' @param order optional character vector, if specified, the rows will follow the order provided
 #' @param normal_policy str, for variables in sd_list, if "wilcox", run stats::wilcox.test, if "t-test", run stats::t.test
 #'
@@ -263,36 +265,54 @@ characteristic_wrapper = function(
 #' @export
 characteristic_table_generator = function(
     data,
-    by,
-    boolean_list,
-    sd_list,
-    IQR_list,
+    by=NULL,
+    boolean_list=NULL,
+    sd_list=NULL,
+    IQR_list=NULL,
     order=NULL,
     normal_policy="wilcox"
 ){
-  data = data %>% dplyr::mutate(!!rlang::sym(by):= !!rlang::sym(by) %>% as.character())
-  boolean = characteristic_wrapper(
-    data = data,
-    variable_list = boolean_list,
-    by = by,
-    mode = "boolean")
-  sd = characteristic_wrapper(
-    data = data,
-    variable_list = sd_list,
-    by = by,
-    mode = "continuous_sd",
-    normal_policy = normal_policy)
-  IQR = characteristic_wrapper(
-    data = data,
-    variable_list = IQR_list,
-    by = by,
-    mode = "continuous_IQR")
-  characteristic_table = rbind(boolean, sd, IQR)
-  if (is.null(order)){
-    return(characteristic_table)
-  } else(
-    return(characteristic_table[order,])
-  )
+  if (base::is.null(by)){
+    by = "characteristic_table_overall"
+    data = data %>% dplyr::mutate(
+      !!rlang::sym(by):= "_")
+  } else {
+    data = data %>%
+      dplyr::mutate(!!rlang::sym(by):= !!rlang::sym(by) %>% as.character())
+  }
+  if (!is.null(boolean_list)){
+    boolean_result = characteristic_wrapper(
+      data = data,
+      variable_list = boolean_list,
+      by = by,
+      mode = "boolean")
+  } else {
+    boolean_result = NULL
+  }
+  if (!is.null(sd_list)){
+    sd_result = characteristic_wrapper(
+      data = data,
+      variable_list = sd_list,
+      by = by,
+      mode = "continuous_sd",
+      normal_policy = normal_policy)
+  } else {
+    sd_result = NULL
+  }
+  if (!is.null(IQR_list)){
+    IQR_result = characteristic_wrapper(
+      data = data,
+      variable_list = IQR_list,
+      by = by,
+      mode = "continuous_IQR")
+  } else {
+    IQR_result = NULL
+  }
+  characteristic_table = rbind(boolean_result, sd_result, IQR_result)
+  if (!is.null(order)){
+    characteristic_table = characteristic_table[order,]
+  }
+  return(characteristic_table %>% dplyr::select(-tidyr::any_of(c("_"))))
 }
 
 
