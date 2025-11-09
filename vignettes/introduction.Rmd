@@ -15,12 +15,18 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(mirrorstoolkit)
 library(dplyr)
 library(readxl)
+library(mirrorstoolkit)
+```
+```{r}
+detach(package:mirrorstoolkit)
+devtools::load_all(".")
 ```
 
-```{r}
+
+
+```{r, include=FALSE}
 df = readxl::read_excel(
   "/Users/alexli/Library/CloudStorage/OneDrive-ColumbiaUniversityIrvingMedicalCenter/Calciphylaxis/cleaned_data/merged_final_dataset.xlsx") %>% 
   dplyr::mutate(
@@ -28,16 +34,59 @@ df = readxl::read_excel(
   dplyr::filter(Race %in% c("AF", "EU"))
 ```
 
+# Compute NIH equation 2 for LDL (calc) estimation
+
+compute_nih_ldl functions allows either value or vectorized operation
+
+## By value
+
+Simply input the value
+
+```{r}
+mirrorstoolkit::compute_nih_ldl(tchol = 112.9,hdl = 39.9, trig = 151)
+```
+
+## Vectorized
+
+Use the column name, it uses basic dplyr naming flow. If your column name is not one character string surround it by ``
+
 ```{r}
 df = df %>% dplyr::mutate(
   `LDL (calc) mg/dL` = mirrorstoolkit::compute_nih_ldl(
     tchol = `Chol mg/dL`,
     hdl = `HDL mg/dL`,
     trig = `Trig mg/dL`))
+
+df %>% 
+  dplyr::select(
+    tidyr::all_of(
+      c("Chol mg/dL", 
+        "HDL mg/dL",
+        "Trig mg/dL", 
+        "LDL (calc) mg/dL")
+      )) %>% head()
 ```
 
-# For two group result
+# Observartion analysis 
 
+## Single Group analysis
+
+### Normality Inspection
+
+This is a part which I feel is not emphasized enough in our lab practice - we need to determine if a lab evaluation or result result is normally distributed. **inspect_distribution()** can give a basic visualization about the distribution by 
+* The histogram
+* The density plot
+* [Shapiro-Wilk test](https://en.wikipedia.org/wiki/Shapiro%E2%80%93Wilk_test) result - please be aware that the null hypothesis is it's normally distributed, thus if it is significant, it is not normal.
+
+It usually gives a lot of warnings (depends on the completeness and quality of your data for most of the times), I suppressed them here for tidiness, but expose the warnings (omit the last function) are recommended, it will give you useful informations.
+
+Please always be aware that the normality it's a very subjective decision, always add a huge grab of your own salts from your reading and experience, especially when you have a small sample size. See below, from my perspective:
+* Albumin skews left.
+* Calcium is quite normal, which is a bit out of my expectation.
+* Smoking is actually boolean (binary, 0/1).
+* LDL, it is on you, you can either treat it as normal or not normal, my experience is it's generally normal.
+* wIS often treated as normally distributed on my side.
+* Lp(a), skewed right for sure
 
 ```{r}
 mirrorstoolkit::inspect_distribution(
@@ -47,54 +96,136 @@ mirrorstoolkit::inspect_distribution(
     "Calcium",
     "Smoking",
     "LDL (calc) mg/dL",
-    "Lp(a) (nmol/L)"),
-  by = "Race"
-  )
+    "wIS",
+    "Lp(a) (nmol/L)")
+  ) %>% base::suppressWarnings()
 ```
+### Characteristic Table
+
+with this result, you can make your decision and generate a characteristic table. 
+* Boolean (1/0) data should be in boolean_list, the ratio of 1 will be computed
+* Normally distributed continuous data should be in sd_list, the mean(sd) will be computed
+* Non-normally distributed continuous data should be in IQR_list, the median(IQR) will be computed
+These three lists can be skipped if you don't have one variable falls into this category.
 
 ```{r}
-table_1_by_race = mirrorstoolkit::characteristic_table_generator(
+characteristic_table_generator(
+  data = df,
+  boolean_list = c("Smoking"),
+  sd_list = c(
+    "Calcium", 
+    "wIS", 
+    "LDL (calc) mg/dL"
+    ),
+  IQR_list = c(
+    "Albumin",
+    "Lp(a) (nmol/L)"
+    ),
+  order = c(
+    "Smoking", 
+    "Albumin",
+    "Calcium", 
+    "LDL (calc) mg/dL",
+    "wIS",
+    "Lp(a) (nmol/L)")
+)
+```
+
+Another implementation can be used here (although I prefer the one above), I don't know why R original output is not a table for multi-column summary.
+
+Please be aware that this one will run summary() for all columns provided in this table.
+```{r}
+mirrorstoolkit::multi_line_summary(
+  df[,c(
+    "Smoking", 
+    "Albumin",
+    "Calcium", 
+    "LDL (calc) mg/dL",
+    "wIS",
+    "Lp(a) (nmol/L)")])
+```
+
+## For two groups result
+
+Most of our analysis is based on two groups, e.g. African American vs Caucasians, Study vs control, etc.
+
+### Normality Inspection
+
+Add a "by" variable will classify the data. However, I'd suggest keep watching it overall for the distribution. This is simply for completeness in quick inspection.
+
+```{r}
+mirrorstoolkit::inspect_distribution(
+  data = df, 
+  by = "Race",
+  variable = c(
+    "Albumin", 
+    "Calcium",
+    "Smoking",
+    "LDL (calc) mg/dL",
+    "wIS",
+    "Lp(a) (nmol/L)")
+  ) %>% base::suppressWarnings()
+```
+
+### Characteristic Table
+
+With a "by" provided, it will generate statistics for sub-class, meanwhile a p_value column is provided.
+* For variables in boolean\_list, the p-value is from chi-square test (stats::chisq.test())
+* For variables in IQR\_list, the p-value is from Mann-Whitney U test (Wilcoxon rank-sum test, stats::wilcox.test())
+* For varaibles in sd\_list, the p-value is depending on variable *normal_policy*
+  - if normal_policy is "wilcox"(*default*): it will run Mann-Whitney U test, for the following two reason:
+    + Our normal data is often not "that normal".
+    + A sample size of 30 or more is often cited as a general guideline to ensure a normal distribution is a reasonable approximation.
+  - if normal_policy is "t-test": it will run [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) (stats::t.test(var.equal = FALSE)), which is a more reliable adaptation of Student's t-test when the two samples have unequal variances and possibly unequal sample sizes
+
+```{r}
+characteristic_table_generator(
   data = df,
   by = "Race",
   boolean_list = c("Smoking"),
-  sd_list = c("Calcium","LDL (calc) mg/dL"),
-  IQR_list = c("Albumin","Lp(a) (nmol/L)"),
+  sd_list = c(
+    "Calcium", 
+    "wIS", 
+    "LDL (calc) mg/dL"
+    ),
+  IQR_list = c(
+    "Albumin",
+    "Lp(a) (nmol/L)"
+    ),
   order = c(
-    "Albumin", 
-    "Calcium",
+    "Smoking", 
+    "Albumin",
+    "Calcium", 
     "LDL (calc) mg/dL",
-    "Lp(a) (nmol/L)",
-    "Smoking"),
+    "wIS",
+    "Lp(a) (nmol/L)"),
   normal_policy = "t-test"
 )
 ```
 
+## For 3+ groups result
 
-```{r}
-table_1_by_race %>% 
-  dplyr::mutate(p_value = p_value %>% as.numeric()) %>% 
-  dplyr::filter(p_value < 0.05)
-```
-# For multi group result
+### Normality Inspection
+
+Normality inspection is same as the 2 groups result
+
+### Characteristic Table
+
+With a "by" provided, it will generate statistics for sub-class, meanwhile a p_value column is provided.
+* For variables in boolean\_list, the p-value is from chi-square test (stats::chisq.test())
+* For variables in IQR\_list, the p-value is from Kruskal–Wallis test (stats::kruskal.test())
+* For varaibles in sd\_list, the p-value is depending on variable *normal_policy*
+  - if normal_policy is "wilcox"(*default*, I inherited the name from above thus won't make things too complex): it will run stats::kruskal.test(), for the following two reason:
+    + Our normal data is often not "that normal".
+    + A sample size of 30 or more is often cited as a general guideline to ensure a normal distribution is a reasonable approximation.
+  - if normal_policy is "t-test": it will run ANOVA(stats::aov())
 
 ```{r}
 df = df %>% dplyr::mutate(
   Calciphylaxis_str = Calciphylaxis %>% plyr::mapvalues(c(0,1), c("control", "disease")),
   group = paste(`Race`, `Calciphylaxis_str`, sep = "_"))
 
-df$group %>% unique()
-```
-```{r}
-mirrorstoolkit::inspect_distribution(
-  data = df, 
-  variable = c(
-    "Albumin", 
-    "Calcium",
-    "Smoking",
-    "LDL (calc) mg/dL",
-    "Lp(a) (nmol/L)"),
-  by = "group"
-  )
+df$group %>% table()
 ```
 
 ```{r}
@@ -102,41 +233,135 @@ table_1_by_group = mirrorstoolkit::characteristic_table_generator(
   data = df,
   by = "group",
   boolean_list = c("Smoking"),
-  sd_list = c("Calcium","LDL (calc) mg/dL"),
-  IQR_list = c("Albumin","Lp(a) (nmol/L)"),
+  sd_list = c(
+    "Calcium", 
+    "wIS", 
+    "LDL (calc) mg/dL"
+    ),
+  IQR_list = c(
+    "Albumin",
+    "Lp(a) (nmol/L)"
+    ),
   order = c(
-    "Albumin", 
-    "Calcium",
+    "Smoking", 
+    "Albumin",
+    "Calcium", 
     "LDL (calc) mg/dL",
-    "Lp(a) (nmol/L)",
-    "Smoking"),
+    "wIS",
+    "Lp(a) (nmol/L)"),
   normal_policy = "t-test"
 )
+table_1_by_group
 ```
 
+The output illutrated the p-value as literal string for I need to keep the format for paper use... To filter the p-value you can do this
 ```{r}
 table_1_by_group %>% 
   dplyr::mutate(p_value = p_value %>% as.numeric()) %>% 
   dplyr::filter(p_value < 0.05)
 ```
+### Pairwise test
+
+Please always be aware that for 3+ group test, one p-value is not sufficient to claim too much stuff. Multi-class chi-square/Kruskal-Wallis/ANOVA only told you "some group is different from the other"
+
+#### Boolean Variables 
+
+Pairwise comparisons between pairs of proportions (stats::pairwise.prop.test) used here, a filled barchart used in the visualization.
+
+When the pairwise test is throwing "Warning: Chi-squared approximation may be incorrect" means that one or more of your table's expected cell counts are too small for the Chi-squared test to be reliable, typically when they are less than 5. This violates the test's assumptions, and you should address it by either increasing sample size, combining categories, or using an alternative like Fisher's exact test or a simulated p-value. 
+* If it's labelled significant, it can be a good support to your claim.
+* If it's not labelled as significant, it doesn't always mean that they are not different, it's simply stats::pairwise.prop.test cannot handle it. Be bold to make your choice.
+
+Some settings, I grabbed a setting from the air for the illustration:
+* *adjustment_method* The choice of this variable is from [here](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/p.adjust). "fdr" (Benjamini-Hochberg FDR correction) by default thus you can often skip it.
+* *p_threshold* will affect the filtering from first to second table, the significant result will be labelled on the top of the figure
+* *variable* can take one or more variables.
+
 ```{r}
-pairwise_t_test_report(
+pairwise_boolean = mirrorstoolkit::pairwise_boolean_report(
   data = df, 
-  variable = c("Calcium"), 
+  variable = c("antiplatelet_group", "statin_group"), 
+  by = "group",
+  adjustment_method = "none",
+  p_threshold = 0.3)
+```
+
+```{r}
+pairwise_boolean$result
+```
+
+```{r}
+pairwise_boolean$significant_result
+```
+
+```{r}
+pairwise_boolean$plot
+```
+
+#### Not Normally Distributed Continuous Variables 
+
+Pairwise Mann-Whiteney U-test (stats::pairwise.wilcox.test) used here, boxplot for illustration.
+
+If you are not confident with the normality or the sample size, use this one.
+
+Please be aware of a toxic chemical reaction here: 
+ - Mann-Whiteney U test is based on the rank of the sample
+ - Boxplot can drop some outliers out.
+
+Thus this report is very visually misleading with extremely small sample size, e.g. AF_disease group only have 5 samples and 1 outliers makes it not significantly different from the other
+
+```{r}
+pairwise_wilcox = pairwise_wilcox_report(
+  data = df, 
+  variable = "Albumin", 
   by = "group"
 )
 ```
+
 ```{r}
-pairwise_wilcox_report(
+pairwise_wilcox$result
+```
+
+```{r}
+pairwise_wilcox$significant_result
+```
+
+```{r}
+pairwise_wilcox$plot
+```
+
+#### Normally Distributed Continuous Variables 
+
+Pairwise t-test (stats::pairwise.t.test) used here, barchart for mean with errorbar (1 sd, not 95% CI) for illustration.
+
+Still, if you are not confident with the normality or the sample size, use the one for not normally distributed variable above.
+
+
+```{r}
+pairwise_t_test = mirrorstoolkit::pairwise_t_test_report(
   data = df, 
-  variable = c("Albumin"), 
-  by = "group"
+  variable = "Calcium", 
+  by = "group",
+  p_threshold = 0.15
 )
 ```
 ```{r}
-pairwise_boolean_report(
-  data = df, 
-  variable = c("Smoking"), 
-  by = "group")
+pairwise_t_test$result
 ```
+```{r}
+pairwise_t_test$significant_result
+```
+
+```{r}
+pairwise_t_test$plot
+```
+If you only want the first table in supplemental data, you can run the one below as well. Replace "report" to "table" in the function name and remove the p_threshold if you have. This function is internally called in mirrorstoolkit::pairwise_t_test_report, so does the other two.
+```{r}
+mirrorstoolkit::pairwise_t_test_table(
+  data = df, 
+  variable = "Calcium", 
+  by = "group"
+)
+```
+
 
