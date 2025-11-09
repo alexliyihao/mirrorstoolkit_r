@@ -4,7 +4,7 @@
 \alias{pairwise_wilcox_table}
 \title{Pairwise distribution comparison report for non-normally distributed variables}
 \usage{
-pairwise_wilcox_table(data, variable, by, adjustment_method)
+pairwise_wilcox_table(data, variable, by, adjustment_method = "fdr")
 }
 \arguments{
 \item{data}{data.frame, the source data}

@@ -4,7 +4,7 @@
 \alias{pairwise_boolean_table}
 \title{Pairwise distribution comparison report for boolean(0/1) variables}
 \usage{
-pairwise_boolean_table(data, variable, by, adjustment_method)
+pairwise_boolean_table(data, variable, by, adjustment_method = "fdr")
 }
 \arguments{
 \item{data}{data.frame, the source data}

@@ -30,5 +30,5 @@ a list with following attributes:
 * plot: ggplot2 instance, the figure illustrating the significant result.
 }
 \description{
-This wrapper will run a stats::pairwise.t.test for each element mentioned in "variable" while stratified across different value in "by" column and prepare a barchart for illustration.
+This wrapper will run a stats::pairwise.wilcox.test for each element mentioned in "variable" while stratified across different value in "by" column and prepare a barchart for illustration.
 }

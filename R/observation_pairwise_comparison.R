@@ -1,4 +1,4 @@
-utils::globalVariables(c("variable_name","group1", "group2","max_1", "max_2"))
+utils::globalVariables(c("variable_name","group1", "group2","max_1", "max_2", "y", "max_annotation"))
 #' Pairwise distribution comparison report for boolean(0/1) variable
 #'
 #' A cleaner wrapper running stats::pairwise.prop.test and clean the output
@@ -40,7 +40,10 @@ pairwise_boolean_test = function(data, variable, by, adjustment_method = "fdr"){
 #'
 #' @return data.frame, the pairwise result for variable(s) stratified by "by" in "data"
 #' @export
-pairwise_boolean_table = function(data, variable, by, adjustment_method){
+pairwise_boolean_table = function(
+    data, variable,
+    by,
+    adjustment_method = "fdr"){
   result = data %>%
     dplyr::select(
       tidyr::all_of(c(by, variable))
@@ -109,17 +112,17 @@ pairwise_boolean_report = function(
 
   g = ggplot2::ggplot(data = for_figure)+
     ggplot2::geom_bar(
-      mapping = ggplot2::aes_string(
-        x = by,
-        fill = "value"),
+      mapping = ggplot2::aes(
+        x = !!rlang::sym(by),
+        fill = value),
       position = "fill")+
     ggsignif::geom_signif(
       data = annotation_significant,
-      ggplot2::aes_string(
-        xmin = "group1",
-        xmax = "group2",
-        annotations = "p_value",
-        y_position="y"),
+      ggplot2::aes(
+        xmin = group1,
+        xmax = group2,
+        annotations = p_value,
+        y_position=y),
       textsize = 3,
       vjust = -0.2,
       manual = TRUE) +
@@ -152,7 +155,7 @@ pairwise_t_test_table = function(
     data,
     variable,
     by,
-    adjustment_method){
+    adjustment_method = "fdr"){
   result = data %>%
     dplyr::select(
       tidyr::all_of(c(by, variable))
@@ -244,9 +247,9 @@ pairwise_t_test_report = function(
 
   g = ggplot2::ggplot(data = for_figure)+
     ggplot2::geom_bar(
-      mapping = ggplot2::aes_string(
-        x = by,
-        y = "mean"
+      mapping = ggplot2::aes(
+        x = !!rlang::sym(by),
+        y = mean
       ),
       stat = "identity")+
     ggplot2::geom_errorbar(
@@ -258,11 +261,11 @@ pairwise_t_test_report = function(
     )+
     ggsignif::geom_signif(
       data = annotation_significant,
-      ggplot2::aes_string(
-        xmin = "group1",
-        xmax = "group2",
-        annotations = "p_value",
-        y_position="max_annotation"),
+      ggplot2::aes(
+        xmin = group1,
+        xmax = group2,
+        annotations = p_value,
+        y_position=max_annotation),
       textsize = 3,
       vjust = -0.2,
       manual = TRUE) +
@@ -293,7 +296,7 @@ pairwise_wilcox_table = function(
     data,
     variable,
     by,
-    adjustment_method){
+    adjustment_method = "fdr"){
   result = data %>%
     dplyr::select(
       tidyr::all_of(c(by, variable))
@@ -319,7 +322,7 @@ pairwise_wilcox_table = function(
 
 #' A wrapper preparing pairwise distribution comparison report normally distributed variables
 #'
-#' This wrapper will run a stats::pairwise.t.test for each element mentioned in "variable" while stratified across different value in "by" column and prepare a barchart for illustration.
+#' This wrapper will run a stats::pairwise.wilcox.test for each element mentioned in "variable" while stratified across different value in "by" column and prepare a barchart for illustration.
 #'
 #' @param data data.frame, the source data
 #' @param variable str or vector of str, the variable you are interested in
@@ -381,18 +384,18 @@ pairwise_wilcox_report = function(
 
   g = ggplot2::ggplot(data = for_figure)+
     ggplot2::geom_boxplot(
-      mapping = ggplot2::aes_string(
-        x = by,
-        y = "value"
+      mapping = ggplot2::aes(
+        x = !!rlang::sym(by),
+        y = value
       ),
       width = 0.3)+
     ggsignif::geom_signif(
       data = annotation_significant,
-      ggplot2::aes_string(
-        xmin = "group1",
-        xmax = "group2",
-        annotations = "p_value",
-        y_position="max_annotation"),
+      ggplot2::aes(
+        xmin = group1,
+        xmax = group2,
+        annotations = p_value,
+        y_position=max_annotation),
       textsize = 3,
       vjust = -0.2,
       manual = TRUE) +

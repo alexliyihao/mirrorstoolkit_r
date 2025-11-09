@@ -4,7 +4,7 @@
 \alias{pairwise_t_test_table}
 \title{Pairwise distribution comparison report for normally distributed variables}
 \usage{
-pairwise_t_test_table(data, variable, by, adjustment_method)
+pairwise_t_test_table(data, variable, by, adjustment_method = "fdr")
 }
 \arguments{
 \item{data}{data.frame, the source data}
