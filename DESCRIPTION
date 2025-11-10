@@ -33,6 +33,7 @@ Suggests:
     ggnewscale,
     ggrepel,
     visNetwork,
+    lubridate,
     ggsignif,
     broom,
     scales,

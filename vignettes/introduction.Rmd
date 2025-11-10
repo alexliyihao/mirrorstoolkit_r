@@ -19,11 +19,6 @@ library(dplyr)
 library(readxl)
 library(mirrorstoolkit)
 ```
-```{r}
-detach(package:mirrorstoolkit)
-devtools::load_all(".")
-```
-
 
 
 ```{r, include=FALSE}
@@ -32,6 +27,13 @@ df = readxl::read_excel(
   dplyr::mutate(
     `Lp(a) (nmol/L)` = `Lp(a) (nmol/L)` %>% as.numeric()) %>% 
   dplyr::filter(Race %in% c("AF", "EU"))
+
+association_result = readxl::read_xlsx(
+  "/Users/alexli/Library/CloudStorage/OneDrive-ColumbiaUniversityIrvingMedicalCenter/Lpa_WHICAP_Badri_Gissette/1st_Paper/WHICAP_result_tables/phenotypes_vs_SNP/phenotypes_vs_SNP_manhattan_minimal.xlsx")
+
+multi_omics_association_result = readxl::read_xlsx(
+  "/Users/alexli/Library/CloudStorage/OneDrive-ColumbiaUniversityIrvingMedicalCenter/Lpa_WHICAP_Badri_Gissette/2nd_paper/cleaned_data/associations/aggregate_significant.xlsx"
+)
 ```
 
 # Compute NIH equation 2 for LDL (calc) estimation
@@ -67,13 +69,14 @@ df %>%
       )) %>% head()
 ```
 
-# Observartion analysis 
+# Exploratory Data Analysis
 
 ## Single Group analysis
 
 ### Normality Inspection
 
 This is a part which I feel is not emphasized enough in our lab practice - we need to determine if a lab evaluation or result result is normally distributed. **inspect_distribution()** can give a basic visualization about the distribution by 
+
 * The histogram
 * The density plot
 * [Shapiro-Wilk test](https://en.wikipedia.org/wiki/Shapiro%E2%80%93Wilk_test) result - please be aware that the null hypothesis is it's normally distributed, thus if it is significant, it is not normal.
@@ -81,7 +84,8 @@ This is a part which I feel is not emphasized enough in our lab practice - we ne
 It usually gives a lot of warnings (depends on the completeness and quality of your data for most of the times), I suppressed them here for tidiness, but expose the warnings (omit the last function) are recommended, it will give you useful informations.
 
 Please always be aware that the normality it's a very subjective decision, always add a huge grab of your own salts from your reading and experience, especially when you have a small sample size. See below, from my perspective:
-* Albumin skews left.
+
+* Albumin, from PMID: 18405401 it's generally normal overall.
 * Calcium is quite normal, which is a bit out of my expectation.
 * Smoking is actually boolean (binary, 0/1).
 * LDL, it is on you, you can either treat it as normal or not normal, my experience is it's generally normal.
@@ -103,24 +107,24 @@ mirrorstoolkit::inspect_distribution(
 ### Characteristic Table
 
 with this result, you can make your decision and generate a characteristic table. 
+
 * Boolean (1/0) data should be in boolean_list, the ratio of 1 will be computed
 * Normally distributed continuous data should be in sd_list, the mean(sd) will be computed
 * Non-normally distributed continuous data should be in IQR_list, the median(IQR) will be computed
+
 These three lists can be skipped if you don't have one variable falls into this category.
 
 ```{r}
-characteristic_table_generator(
+mirrorstoolkit::characteristic_table_generator(
   data = df,
   boolean_list = c("Smoking"),
   sd_list = c(
     "Calcium", 
     "wIS", 
-    "LDL (calc) mg/dL"
+    "LDL (calc) mg/dL",
+    "Albumin"
     ),
-  IQR_list = c(
-    "Albumin",
-    "Lp(a) (nmol/L)"
-    ),
+  IQR_list = "Lp(a) (nmol/L)",
   order = c(
     "Smoking", 
     "Albumin",
@@ -170,6 +174,7 @@ mirrorstoolkit::inspect_distribution(
 ### Characteristic Table
 
 With a "by" provided, it will generate statistics for sub-class, meanwhile a p_value column is provided.
+
 * For variables in boolean\_list, the p-value is from chi-square test (stats::chisq.test())
 * For variables in IQR\_list, the p-value is from Mann-Whitney U test (Wilcoxon rank-sum test, stats::wilcox.test())
 * For varaibles in sd\_list, the p-value is depending on variable *normal_policy*
@@ -179,19 +184,17 @@ With a "by" provided, it will generate statistics for sub-class, meanwhile a p_v
   - if normal_policy is "t-test": it will run [Welch's t-test](https://en.wikipedia.org/wiki/Welch%27s_t-test) (stats::t.test(var.equal = FALSE)), which is a more reliable adaptation of Student's t-test when the two samples have unequal variances and possibly unequal sample sizes
 
 ```{r}
-characteristic_table_generator(
+mirrorstoolkit::characteristic_table_generator(
   data = df,
   by = "Race",
   boolean_list = c("Smoking"),
   sd_list = c(
     "Calcium", 
     "wIS", 
-    "LDL (calc) mg/dL"
+    "LDL (calc) mg/dL",
+    "Albumin"
     ),
-  IQR_list = c(
-    "Albumin",
-    "Lp(a) (nmol/L)"
-    ),
+  IQR_list = "Lp(a) (nmol/L)",
   order = c(
     "Smoking", 
     "Albumin",
@@ -212,6 +215,7 @@ Normality inspection is same as the 2 groups result
 ### Characteristic Table
 
 With a "by" provided, it will generate statistics for sub-class, meanwhile a p_value column is provided.
+
 * For variables in boolean\_list, the p-value is from chi-square test (stats::chisq.test())
 * For variables in IQR\_list, the p-value is from Kruskal–Wallis test (stats::kruskal.test())
 * For varaibles in sd\_list, the p-value is depending on variable *normal_policy*
@@ -236,12 +240,10 @@ table_1_by_group = mirrorstoolkit::characteristic_table_generator(
   sd_list = c(
     "Calcium", 
     "wIS", 
-    "LDL (calc) mg/dL"
+    "LDL (calc) mg/dL",
+    "Albumin"
     ),
-  IQR_list = c(
-    "Albumin",
-    "Lp(a) (nmol/L)"
-    ),
+  IQR_list = "Lp(a) (nmol/L)",
   order = c(
     "Smoking", 
     "Albumin",
@@ -269,12 +271,14 @@ Please always be aware that for 3+ group test, one p-value is not sufficient to 
 Pairwise comparisons between pairs of proportions (stats::pairwise.prop.test) used here, a filled barchart used in the visualization.
 
 When the pairwise test is throwing "Warning: Chi-squared approximation may be incorrect" means that one or more of your table's expected cell counts are too small for the Chi-squared test to be reliable, typically when they are less than 5. This violates the test's assumptions, and you should address it by either increasing sample size, combining categories, or using an alternative like Fisher's exact test or a simulated p-value. 
+
 * If it's labelled significant, it can be a good support to your claim.
 * If it's not labelled as significant, it doesn't always mean that they are not different, it's simply stats::pairwise.prop.test cannot handle it. Be bold to make your choice.
 
 Some settings, I grabbed a setting from the air for the illustration:
+
 * *adjustment_method* The choice of this variable is from [here](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/p.adjust). "fdr" (Benjamini-Hochberg FDR correction) by default thus you can often skip it.
-* *p_threshold* will affect the filtering from first to second table, the significant result will be labelled on the top of the figure
+* *p_threshold* will affect the filtering from first to second table, the significant result will be labelled on the top of the figure, 0.05 by default
 * *variable* can take one or more variables.
 
 ```{r}
@@ -309,12 +313,16 @@ Please be aware of a toxic chemical reaction here:
  - Boxplot can drop some outliers out.
 
 Thus this report is very visually misleading with extremely small sample size, e.g. AF_disease group only have 5 samples and 1 outliers makes it not significantly different from the other
+```{r}
+df$`Lp(a) (nmol/L)`
+```
 
 ```{r}
-pairwise_wilcox = pairwise_wilcox_report(
+pairwise_wilcox = mirrorstoolkit::pairwise_wilcox_report(
   data = df, 
-  variable = "Albumin", 
-  by = "group"
+  variable = "Lp(a) (nmol/L)", 
+  by = "group",
+  p_threshold = 0.30
 )
 ```
 
@@ -340,7 +348,7 @@ Still, if you are not confident with the normality or the sample size, use the o
 ```{r}
 pairwise_t_test = mirrorstoolkit::pairwise_t_test_report(
   data = df, 
-  variable = "Calcium", 
+  variable = c("Calcium","Albumin"), 
   by = "group",
   p_threshold = 0.15
 )
@@ -355,7 +363,10 @@ pairwise_t_test$significant_result
 ```{r}
 pairwise_t_test$plot
 ```
-If you only want the first table in supplemental data, you can run the one below as well. Replace "report" to "table" in the function name and remove the p_threshold if you have. This function is internally called in mirrorstoolkit::pairwise_t_test_report, so does the other two.
+
+
+If you only want the first table in supplemental data, you can run the one below as well. Replace "report" to "table" in the function name and remove the p_threshold if you have. This function is internally called in mirrorstoolkit::pairwise_t_test_report, so do the other two.
+
 ```{r}
 mirrorstoolkit::pairwise_t_test_table(
   data = df, 
@@ -364,4 +375,152 @@ mirrorstoolkit::pairwise_t_test_table(
 )
 ```
 
+
+# Association Studies
+
+For those you are interested, you might want to log them if you think they are not normally distributed
+
+```{r}
+df = df %>% dplyr::mutate(
+  LDL = `LDL (calc) mg/dL`,
+  lpa_logged = `Lp(a) (nmol/L)` %>% base::log2(),
+)
+```
+
+```{r}
+# The adjustment variable you need
+adjustments = c(
+  "Age", 
+  "Gender", 
+  "AF", 
+  "BMI",
+  "Smoking",
+  "antiplatelet_group", 
+  "anticoagulant_group", 
+  "statin_group"
+  )
+# The variable you are interested in
+variable_list = c(
+  "Albumin",
+  "Calcium",
+  "LDL",
+  "wIS", 
+  "lpa_logged")
+# In case the column name is not what you want in the output 
+variable_list_formal = c(
+  "Albumin",
+  "Calcium",
+  "LDL(calc) mg/dL",
+  "wIS",
+  "Lp(a) nmol/L, 2-logged"
+  )
+```
+
+OLS_wrapper and logistic_wrapper() can deal with most of the association analysis we need. In most of our tasks, we can specify the follow 2 or 3 list as global settings used repetitively.
+
+What you need to specify is:
+
+* response, which the column name of your target (y)
+* data, your dataframe,
+* adjustments, you adjustment list defined above
+* by, if you want to categorize the data
+* variable_of_interest, your variable list
+* variable_of_interest_formal_name, the variable name list in the data
+
+```{r}
+mirrorstoolkit::logistic_wrapper(
+  response = "Calciphylaxis",
+  data = df, 
+  adjustments = adjustments,
+  variable_of_interest = variable_list,
+  variable_of_interest_formal_name = variable_list_formal
+  )
+```
+
+```{r}
+df_disease =df %>% 
+  dplyr::filter(Calciphylaxis == 1) %>% 
+  dplyr::mutate(
+    duration_before_diagnosis = (Calciphylaxis_diagnosis_date - HD_start_date) %>%
+      lubridate::as.duration()/ lubridate::dmonths(1),
+    duration_before_diagnosis = pmax(duration_before_diagnosis,0))
+df_disease$duration_before_diagnosis
+```
+```{r}
+mirrorstoolkit::OLS_wrapper(
+  data = df_disease,
+  response = "duration_before_diagnosis",
+  adjustments = adjustments,
+  variable_of_interest = variable_list,
+  variable_of_interest_formal_name = variable_list_formal
+)
+```
+# Summarize association studies
+
+## Manhattan Plot
+
+A quick Manhattan plot API is provided. A minimal data input can be the following
+
+```{r}
+association_result %>% head(3)
+```
+
+Simply provide the column names to the API.
+
+* pos: the position of SNV
+* phenotype: the phenotype it links to
+* p_value: the p_value of the association
+* formal_name: give name to each SNV
+* phenotype_list: the list of phenotype you want to work on.
+* p_value_threshold: default 0.05, which will affect the significance level (red horizontal line), all points above this line should be labelled unless there are too many overlapping
+
+```{r}
+mirrorstoolkit::manhattan_plot(
+  data = association_result,
+  pos = "pos",
+  phenotype = "phenotype",
+  p_value = "FDR_adjusted_p-value",
+  formal_name = "SNP",
+  phenotype_list = c("Hypertension", "HDL", "Glucose")
+)
+```
+It's also okay for single phenotype, with another p-value threshold
+
+```{r}
+mirrorstoolkit::manhattan_plot(
+  data = association_result,
+  pos = "pos",
+  phenotype = "phenotype",
+  p_value = "FDR_adjusted_p-value",
+  formal_name = "SNP",
+  phenotype_list = "Hypertension",
+  p_value_threshold = 0.10
+)
+```
+
+## Directed Acyclic Graph for multi-omics data
+
+For data like these...
+```{r}
+multi_omics_association_result %>% head(5)
+```
+
+
+You can quickly generate these by networkX, it can be saved as an interactive html files if you need.
+
+```{r}
+dag = mirrorstoolkit::multi_omics_directed_acyclic_graph(
+  data = multi_omics_association_result,
+  from = "from",
+  to = "to",
+  beta = "beta",
+  p_value = "FDR_adjusted_p-value",
+  from_class = "from_type",
+  to_class = "to_type"
+)
+```
+
+```{r}
+dag$illustration_network
+```
 
