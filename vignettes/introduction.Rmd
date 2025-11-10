@@ -1,8 +1,13 @@
 ---
-title: "introduction"
+title: "Mirrorstoolkit: A quick one-liner analysis tool in R"
+author: 
+- name: "Yihao Li"
+  affiliation: 
+  - "Reyes-Soffer Lab, Division of Preventive medicine, Department of Medicine, Columbia University Irving Medical Center; "
+  - "Badri Vardarajan Lab, Gertrude H. Sergievsky Center, Department of Neurology, Columbia University Irving Medical Center"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{introduction}
+  %\VignetteIndexEntry{Mirrorstoolkit: A quick one-liner analysis tool in R}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,7 +15,9 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 7, 
+  fig.height = 4.5
 )
 ```
 
@@ -36,11 +43,13 @@ multi_omics_association_result = readxl::read_xlsx(
 )
 ```
 
-# Compute NIH equation 2 for LDL (calc) estimation
+# Data Preparation
+
+## Compute NIH equation 2 for LDL (calc) estimation
 
 compute_nih_ldl functions allows either value or vectorized operation
 
-## By value
+### By value
 
 Simply input the value
 
@@ -48,9 +57,9 @@ Simply input the value
 mirrorstoolkit::compute_nih_ldl(tchol = 112.9,hdl = 39.9, trig = 151)
 ```
 
-## Vectorized
+### Vectorized
 
-Use the column name, it uses basic dplyr naming flow. If your column name is not one character string surround it by ``
+Use the column name, it uses basic dplyr naming flow. If your column name is not one character string surround it by  "`"
 
 ```{r}
 df = df %>% dplyr::mutate(
@@ -85,7 +94,7 @@ It usually gives a lot of warnings (depends on the completeness and quality of y
 
 Please always be aware that the normality it's a very subjective decision, always add a huge grab of your own salts from your reading and experience, especially when you have a small sample size. See below, from my perspective:
 
-* Albumin, from PMID: 18405401 it's generally normal overall.
+* Albumin, from PMID: 18405401, is generally normal overall.
 * Calcium is quite normal, which is a bit out of my expectation.
 * Smoking is actually boolean (binary, 0/1).
 * LDL, it is on you, you can either treat it as normal or not normal, my experience is it's generally normal.
@@ -104,9 +113,10 @@ mirrorstoolkit::inspect_distribution(
     "Lp(a) (nmol/L)")
   ) %>% base::suppressWarnings()
 ```
+
 ### Characteristic Table
 
-with this result, you can make your decision and generate a characteristic table. 
+With the result above, you can make your decision and generate a characteristic table. 
 
 * Boolean (1/0) data should be in boolean_list, the ratio of 1 will be computed
 * Normally distributed continuous data should be in sd_list, the mean(sd) will be computed
@@ -309,6 +319,7 @@ Pairwise Mann-Whiteney U-test (stats::pairwise.wilcox.test) used here, boxplot f
 If you are not confident with the normality or the sample size, use this one.
 
 Please be aware of a toxic chemical reaction here: 
+
  - Mann-Whiteney U test is based on the rank of the sample
  - Boxplot can drop some outliers out.
 
@@ -378,7 +389,7 @@ mirrorstoolkit::pairwise_t_test_table(
 
 # Association Studies
 
-For those you are interested, you might want to log them if you think they are not normally distributed
+For those you are interested, you might want to log them if you think they are not normally distributed:
 
 ```{r}
 df = df %>% dplyr::mutate(
@@ -386,6 +397,9 @@ df = df %>% dplyr::mutate(
   lpa_logged = `Lp(a) (nmol/L)` %>% base::log2(),
 )
 ```
+
+
+OLS_wrapper and logistic_wrapper() can deal with most of the association analysis we need. In most of our tasks, we can specify the follow 2 or 3 lists as global settings used repetitively.
 
 ```{r}
 # The adjustment variable you need
@@ -416,12 +430,22 @@ variable_list_formal = c(
   )
 ```
 
-OLS_wrapper and logistic_wrapper() can deal with most of the association analysis we need. In most of our tasks, we can specify the follow 2 or 3 list as global settings used repetitively.
+
+## Logistics regression
+
+The wrapper is runing in the following way: 
+
+- For each column name mentioned in *variable_list*, let's call it *variable_i*
+  * Grab the columns mentioned in *variable_i*, *adjustments*, and *response* from *data*. If *variable_i* is in *adjustments*, will remove the duplicates
+  * Logistic regression *response* $\sim$ *variable_i* + *adjustment* + 1
+  * Seek the effect size and coefficient of *variable_i*, compute the odd ratio by exp(effect size)
+- Collect all the data
+
 
 What you need to specify is:
 
+* data, your dataframe
 * response, which the column name of your target (y)
-* data, your dataframe,
 * adjustments, you adjustment list defined above
 * by, if you want to categorize the data
 * variable_of_interest, your variable list
@@ -429,13 +453,17 @@ What you need to specify is:
 
 ```{r}
 mirrorstoolkit::logistic_wrapper(
-  response = "Calciphylaxis",
   data = df, 
+  response = "Calciphylaxis",
   adjustments = adjustments,
   variable_of_interest = variable_list,
   variable_of_interest_formal_name = variable_list_formal
   )
 ```
+
+## Ordinary Linear Regression
+
+The setting is similar, let's generate a continuous target variable:
 
 ```{r}
 df_disease =df %>% 
@@ -446,6 +474,9 @@ df_disease =df %>%
     duration_before_diagnosis = pmax(duration_before_diagnosis,0))
 df_disease$duration_before_diagnosis
 ```
+
+I called it OLS because machine learning community call it so... Forgive me. Ordinary linear regression doesn't have OR defined thus only beta and p-value here.
+
 ```{r}
 mirrorstoolkit::OLS_wrapper(
   data = df_disease,
