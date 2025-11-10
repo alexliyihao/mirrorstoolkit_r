@@ -99,7 +99,7 @@ pairwise_boolean_report = function(
     dplyr::filter(p_value < p_threshold) %>%
     dplyr::group_by(variable_name) %>%
     dplyr::mutate(
-      p_value = p_value %>% round(2),
+      p_value = p_value %>% base::signif(2),
       y = 0.94 + 0.07*dplyr::row_number()) %>%
     dplyr::ungroup()
 
@@ -238,7 +238,7 @@ pairwise_t_test_report = function(
     ) %>%
     dplyr::mutate(
       max_annotation = base::pmax(max_1, max_2),
-      p_value = p_value %>% round(2)) %>%
+      p_value = p_value %>% base::signif(2)) %>%
     dplyr::group_by(variable_name) %>%
     dplyr::mutate(
       max_annotation = (.data$max_annotation %>% max()) * (0.85+0.2*dplyr::row_number())
@@ -375,7 +375,7 @@ pairwise_wilcox_report = function(
     ) %>%
     dplyr::mutate(
       max_annotation = base::pmax(max_1, max_2),
-      p_value = p_value %>% round(2)) %>%
+      p_value = p_value %>% base::signif(2)) %>%
     dplyr::group_by(variable_name) %>%
     dplyr::mutate(
       max_annotation = (.data$max_annotation %>% base::max(na.rm = TRUE)) * (0.75+0.25*dplyr::row_number())
