@@ -15,19 +15,19 @@ LazyData: true
 Imports:
     stats,
     rlang,
-    dplyr (>= 1.1.4),
-    plyr (>= 1.8.9),
-    tidyr (>= 1.3.1),
-    tibble (>= 3.2.1),
+    dplyr,
+    plyr,
+    tidyr,
+    tibble,
     magrittr,
-    ggplot2 (>= 3.5.1),
-    data.table (>= 1.16.2),
-    purrr (>= 1.1.0),
-    forcats (>= 1.0.0)
+    ggplot2,
+    data.table,
+    purrr,
+    forcats,
+    Polychrome
 RoxygenNote: 7.3.3
 Suggests: 
     knitr,
-    Polychrome,
     rmarkdown,
     ggpubr,
     ggnewscale,
