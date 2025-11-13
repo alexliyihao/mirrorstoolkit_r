@@ -63,6 +63,8 @@ trend_bar_chart = function(
       name = "percentage",
       labels = scales::label_percent(accuracy = 1),
       expand = ggplot2::expansion(mult = c(0, 0)))+
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(angle = 90))+
     ggplot2::guides(
       fill=ggplot2::guide_legend(title=legend_title))
   return(g)
