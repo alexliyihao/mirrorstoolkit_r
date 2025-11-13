@@ -41,6 +41,16 @@ association_result = readxl::read_xlsx(
 multi_omics_association_result = readxl::read_xlsx(
   "/Users/alexli/Library/CloudStorage/OneDrive-ColumbiaUniversityIrvingMedicalCenter/Lpa_WHICAP_Badri_Gissette/2nd_paper/cleaned_data/associations/aggregate_significant.xlsx"
 )
+
+lipidomics = readxl::read_xlsx("/Users/alexli/Library/CloudStorage/OneDrive-ColumbiaUniversityIrvingMedicalCenter/Lpa_metabolism_Gissette/cleaned_data/20241011_WHICAP_lipidomics/lipidomics_mol_percentage_subcategorized.xlsx")
+serum_info = readxl::read_excel("/Users/alexli/Library/CloudStorage/OneDrive-ColumbiaUniversityIrvingMedicalCenter/Lpa_metabolism_Gissette/cleaned_data/WHICAP_phenotypes/masterlist_2024_sample.xlsx")
+lipidomic_samples = base::merge(  
+  x = serum_info %>% dplyr::select(tidyr::all_of(c("WES_ID", "Lp(a) (nmol/L)"))),
+  y = lipidomics,
+  by = "WES_ID") %>%
+  dplyr::select(
+      c("WES_ID", "Lp(a) (nmol/L)", dplyr::starts_with("DG"))
+    )
 ```
 
 # Data Preparation
@@ -386,6 +396,24 @@ mirrorstoolkit::pairwise_t_test_table(
 )
 ```
 
+## Composition Component Trends
+
+For the illustration of trends of a composition with a set of components
+```{r}
+lipidomic_samples %>% head(3)
+```
+
+You can either specify the column you want by variable = c("col1", "col2", "col3") if you need, but most of the times it will be quite lengthy. If it is not specified, it will use all the columns not mentioned in the table.
+
+```{r}
+mirrorstoolkit::trend_bar_chart(
+  data = lipidomic_samples,
+  id = "WES_ID",
+  by = "Lp(a) (nmol/L)",
+  legend_title = "DG"
+)
+```
+
 
 # Association Studies
 
@@ -554,4 +582,5 @@ dag = mirrorstoolkit::multi_omics_directed_acyclic_graph(
 ```{r}
 dag$illustration_network
 ```
+
 
