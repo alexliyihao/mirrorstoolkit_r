@@ -8,8 +8,7 @@ Authors@R: c(
   person("Badri", "Vardarajan", email = "bnv2103@cumc.columbia.edu", role = c("fnd"), comment = c(ORCID = "0000-0002-5560-4085"))
   )
 Maintainer: Yihao Li <alexliyihao@gmail.com>
-Description: The code accumulated in the practice for most often used 
-    functionalities in biomedical studies. 
+Description: The code accumulated in the practice for most often used functionalities in biomedical studies.
 Encoding: UTF-8
 LazyData: true
 Imports:
@@ -24,20 +23,20 @@ Imports:
     data.table,
     purrr,
     forcats,
-    Polychrome
-RoxygenNote: 7.3.3
-Suggests: 
-    knitr,
-    rmarkdown,
+    Polychrome,
     ggpubr,
     ggnewscale,
     ggrepel,
     visNetwork,
-    lubridate,
     ggsignif,
     broom,
-    scales,
+    scales
+RoxygenNote: 7.3.3
+Suggests:
+    knitr,
+    rmarkdown,
     readxl,
+    lubridate,
     devtools
 VignetteBuilder: knitr
 License: MIT + file LICENSE

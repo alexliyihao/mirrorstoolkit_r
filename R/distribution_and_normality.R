@@ -62,7 +62,6 @@ inspect_distribution = function(
     variable,
     by = NULL,
     palette_color = NULL){
-  rlang::check_installed("ggpubr", reason = "to use `ggpubr::ggarrange()`")
   if (!is.vector(variable)){
     variable = c(variable)
   }
