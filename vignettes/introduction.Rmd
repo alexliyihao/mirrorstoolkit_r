@@ -1,11 +1,11 @@
 ---
-title: "Mirrorstoolkit: A quick one-liner analysis tool in R"
-author: 
+title: "Mirrorstoolkit: one-liner analysis tool"
+author:
 - name: "Yihao Li"
   affiliation: 
   - "Reyes-Soffer Lab, Division of Preventive medicine, Department of Medicine, Columbia University Irving Medical Center; "
   - "Badri Vardarajan Lab, Gertrude H. Sergievsky Center, Department of Neurology, Columbia University Irving Medical Center"
-output: rmarkdown::html_vignette
+output: BiocStyle::html_document
 vignette: >
   %\VignetteIndexEntry{Mirrorstoolkit: A quick one-liner analysis tool in R}
   %\VignetteEngine{knitr::rmarkdown}
@@ -26,7 +26,6 @@ library(dplyr)
 library(readxl)
 library(mirrorstoolkit)
 ```
-
 
 ```{r, include=FALSE}
 df = readxl::read_excel(
@@ -395,6 +394,50 @@ mirrorstoolkit::pairwise_t_test_table(
   by = "group"
 )
 ```
+
+## Correlation matrix
+
+We provide two functions for correlation matrix analysis.
+
+### To visualize the correlation matrix
+
+mirrorstoolkit::correlation_matrix_plot will return a ggplot2 instance, sharing a similar argument setting:
+
+ - variable is optional, if not provided, will use all the columns provided in data. However, as a fool-proofing operation, providing the variable column is a good sanity check as the function will internally enforces all the value in your data table to numeric.
+ - font_size is 5 by default for all labels.
+ - please be aware that the order is reordered by hierarchical clustering for better cluster illustration
+
+```{r}
+mirrorstoolkit::correlation_matrix_plot(
+  data = df,
+  variable = c("BMI", "Albumin", "Calcium", "CRP", "apoB (nmol/L)","%Lp(a)-ApoB100"),
+  font_size = 8
+)
+```
+
+This function also provide a filter operation by the p-value as long as the p_threshold is specified. see below (I changed the way inputting column here for illustration purpose, it doesn't matter):
+
+```{r}
+mirrorstoolkit::correlation_matrix_plot(
+  data = df %>% dplyr::select(
+    tidyr::all_of(c("BMI", "Albumin", "Calcium", "CRP", "apoB (nmol/L)","%Lp(a)-ApoB100"))
+    ),
+  font_size = 8,
+  p_threshold = 0.05
+)
+```
+
+### To further deal with the correlation matrix
+
+For potential multi-omics studies in the future, I left an function here outputting the matrix as data.frame format, which removed all the redundant columns. It has a p_threshold option same as above but I don't think it's necessary here.
+
+```{r}
+mirrorstoolkit::correlation_matrix_dataframe(
+  data = df,
+  variable = c("BMI", "Albumin", "Calcium", "CRP", "apoB (nmol/L)","%Lp(a)-ApoB100")
+)
+```
+
 
 ## Composition Component Trends
 

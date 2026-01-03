@@ -39,6 +39,7 @@ Suggests:
     rmarkdown,
     readxl,
     lubridate,
-    devtools
+    devtools,
+    BiocStyle
 VignetteBuilder: knitr
 License: MIT + file LICENSE
