@@ -28,6 +28,8 @@ library(mirrorstoolkit)
 ```
 
 ```{r, include=FALSE}
+#detach(package:mirrorstoolkit)
+#devtools::install(".",upgrade_dependencies = FALSE)
 df = readxl::read_excel(
   "/Users/alexli/Library/CloudStorage/OneDrive-ColumbiaUniversityIrvingMedicalCenter/Calciphylaxis/cleaned_data/merged_final_dataset.xlsx") %>% 
   dplyr::mutate(
@@ -626,4 +628,42 @@ dag = mirrorstoolkit::multi_omics_directed_acyclic_graph(
 dag$illustration_network
 ```
 
+## Visualization of restricted cubic spline model
+
+```{r, include = FALSE}
+# Quickly initiate a dataset
+n <- 30000
+base::set.seed(42)
+df = cbind(
+    factor1 = rnorm(n, 1, 0.05),
+    factor2 = rnorm(n, 0, 1),
+    age = rnorm(n, 56, 5),
+    bmi = rnorm(n, 26, 5),
+    sex = sample(c(0,1), n,TRUE)
+    ) %>% as.data.frame()
+L = -5*log(df$factor1)+5*exp(df$factor2) + 0.05*df$bmi + 0.5*df$sex + 0.25*df$age
+L = (L-L %>% min())/(L %>% max() - L %>% min())
+y <- base::ifelse(stats::runif(n) < stats::plogis(L), 1, 0)
+```
+```{r}
+head(df)
+head(y)
+```
+
+```{r}
+dd = rms::datadist(df)
+lrm_fit <- rms::lrm(
+  y ~ rms::rcs(factor1,3)*rms::rcs(factor2,3)+ bmi+sex+age,
+  data = df)
+```
+
+
+```{r}
+mirrorstoolkit::rms_illustration_3d(
+  fit = lrm_fit, 
+  datadist = dd, 
+  variable = c("factor1", "factor2"),
+  target_name = "target",
+  density = 30)
+```
 
