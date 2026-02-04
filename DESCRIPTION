@@ -12,6 +12,7 @@ Description: The code accumulated in the practice for most often used functional
 Encoding: UTF-8
 LazyData: true
 Imports:
+    rlang,
     dplyr,
     plyr,
     tidyr,
@@ -34,13 +35,13 @@ Imports:
     plotly
 RoxygenNote: 7.3.3
 Suggests:
-    rlang,
     knitr,
     rmarkdown,
     readxl,
     lubridate,
     devtools,
     BiocStyle,
-    stats
+    stats,
+    rms
 VignetteBuilder: knitr
 License: MIT + file LICENSE
