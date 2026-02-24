@@ -36,11 +36,6 @@ I’m using a Macbook 2016 with macOS Monterey 12.7.6. Running R 4.4.0
 with tidyverse family. I’ll make sure all the packages I used is based
 on CRAN.
 
-Dependency note: This package has a part heavily depend on dplyr::do()
-which is officially superseded. But I haven’t find a proper way to deal
-with it by dplyr::reframe(), dplyr::nest_by(), and dplyr::pick() as what
-dplyr claimed. I’ll try to finish it before its official deprecation.
-
 ## When
 
 I’ll keep growing this one. Along with its Python counterpart
