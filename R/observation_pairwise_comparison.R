@@ -16,12 +16,13 @@ pairwise_boolean_test = function(data, variable, by, adjustment_method = "fdr"){
       count = dplyr::n(),
       sum = !!rlang::sym(variable) %>% base::sum()) %>%
     tibble::column_to_rownames(var = by) %>%
-    dplyr::do(
-      stats::pairwise.prop.test(
-        x = .data[,c("sum","count")] %>% base::as.matrix(),
+    dplyr::group_modify(
+      ~ stats::pairwise.prop.test(
+        x = .x[,c("sum","count")] %>% base::as.matrix(),
         p.adjust.method = adjustment_method
       ) %>%
-        broom::tidy()
+        broom::tidy(),
+      .keep = TRUE
     ) %>%
     dplyr::rename(
       p_value = "p.value"
@@ -53,12 +54,13 @@ pairwise_boolean_table = function(
       names_to = "variable_name",
       values_to = "value") %>%
     dplyr::group_by(variable_name) %>%
-    dplyr::do(
-      pairwise_boolean_test(
-        data = .data,
+    dplyr::group_modify(
+      ~ pairwise_boolean_test(
+        data = .x,
         variable = "value",
         by = by,
-        adjustment_method = adjustment_method)) %>%
+        adjustment_method = adjustment_method),
+      .keep = TRUE) %>%
     dplyr::ungroup()
   return(result)
 }
@@ -165,14 +167,15 @@ pairwise_t_test_table = function(
       names_to = "variable_name",
       values_to = "value") %>%
     dplyr::group_by(variable_name) %>%
-    dplyr::do(
-      stats::pairwise.t.test(
-        .data %>% dplyr::pull(value),
-        .data %>% dplyr::pull(by),
+    dplyr::group_modify(
+      ~ stats::pairwise.t.test(
+        .x %>% dplyr::pull(value),
+        .x %>% dplyr::pull(by),
         p.adjust.method = adjustment_method,
         paired = FALSE,
         exact=FALSE) %>%
-        broom::tidy()
+        broom::tidy(),
+      .keep = TRUE
     ) %>%
     dplyr::ungroup() %>%
     dplyr::rename(p_value = "p.value")
@@ -306,14 +309,15 @@ pairwise_wilcox_table = function(
       names_to = "variable_name",
       values_to = "value") %>%
     dplyr::group_by(variable_name) %>%
-    dplyr::do(
-      stats::pairwise.wilcox.test(
-        .data %>% dplyr::pull(value),
-        .data %>% dplyr::pull(by),
+    dplyr::group_modify(
+      ~ stats::pairwise.wilcox.test(
+        .x %>% dplyr::pull(value),
+        .x %>% dplyr::pull(by),
         p.adjust.method = adjustment_method,
         paired = FALSE,
         exact=FALSE) %>%
-        broom::tidy()
+        broom::tidy(),
+      .keep = TRUE
     ) %>%
     dplyr::ungroup() %>%
     dplyr::rename(p_value = "p.value")

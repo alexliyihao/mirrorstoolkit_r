@@ -86,13 +86,15 @@ OLS_wrapper = function(data, response, adjustments, variable_of_interest, by=NUL
   }
   output = data %>%
     dplyr::group_by(dplyr::across(tidyr::all_of(by))) %>%
-    dplyr::do(OLS_wrapper_(
+    dplyr::group_modify(
+      ~ OLS_wrapper_(
       response = response,
       data = .data,
       adjustments = adjustments_,
       variable_of_interest = variable_of_interest,
       variable_of_interest_formal_name = variable_of_interest_formal_name) %>%
-        tibble::rownames_to_column("variable"))
+        tibble::rownames_to_column("variable"),
+      .keep = TRUE)
   return(output)
 }
 
@@ -187,13 +189,15 @@ logistic_wrapper = function(data, response, adjustments, by = NULL, variable_of_
   }
   output = data %>%
     dplyr::group_by(dplyr::across(tidyr::all_of(by))) %>%
-    dplyr::do(logistic_wrapper_(
-      response = response,
-      data = .data,
-      adjustments = adjustments_,
-      variable_of_interest = variable_of_interest,
-      variable_of_interest_formal_name = variable_of_interest_formal_name) %>%
-        tibble::rownames_to_column("variable")
+    dplyr::group_modify(
+      ~logistic_wrapper_(
+        response = response,
+        data = .data,
+        adjustments = adjustments_,
+        variable_of_interest = variable_of_interest,
+        variable_of_interest_formal_name = variable_of_interest_formal_name) %>%
+        tibble::rownames_to_column("variable"),
+      .keep = TRUE
     ) %>%
     dplyr::mutate(`Odd Ratio` = base::exp(`Effect Size`)) %>%
     dplyr::select(c("variable","Effect Size","Odd Ratio","P-value"))
