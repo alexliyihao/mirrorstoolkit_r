@@ -61,3 +61,4 @@ rsconnect/
 # Apple macOS custom attributes
 .DS_Store
 pkgdownoperation.txt
+docs
