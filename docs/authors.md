@@ -14,11 +14,13 @@
 ## Citation
 
 Li Y (2026). *mirrorstoolkit: Toolkit for biomedical paper output
-preparation*. R package version 0.1.0.
+preparation*. R package version 0.1.0,
+<https://alexliyihao.github.io/mirrorstoolkit_r/>.
 
     @Manual{,
       title = {mirrorstoolkit: Toolkit for biomedical paper output preparation},
       author = {Yihao Li},
       year = {2026},
       note = {R package version 0.1.0},
+      url = {https://alexliyihao.github.io/mirrorstoolkit_r/},
     }
