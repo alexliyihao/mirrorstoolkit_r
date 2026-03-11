@@ -5,6 +5,9 @@
 - **Yihao Li**. Author, maintainer.
   [](https://orcid.org/0009-0009-8722-3437)
 
+- **Nelsa Matienzo**. Reviewer, data contributor.
+  [](https://orcid.org/0000-0002-8826-0311)
+
 - **Gissette Reyes-Soffer**. Funder.
   [](https://orcid.org/0000-0002-6746-4569)
 

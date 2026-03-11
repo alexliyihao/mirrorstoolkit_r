@@ -4,6 +4,7 @@ Title: Toolkit for biomedical paper output preparation
 Version: 0.1.0
 Authors@R: c(
   person("Yihao", "Li", email = "alexliyihao@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0009-0009-8722-3437")),
+  person("Nelsa", "Matienzo", email = "nm3016@cumc.columbia.edu",  role = c("rev", "dtc"), comment = c(ORCID = "0000-0002-8826-0311")),
   person("Gissette", "Reyes-Soffer", email = "gr2104@cumc.columbia.edu", role = c("fnd"), comment = c(ORCID = "0000-0002-6746-4569")),
   person("Badri", "Vardarajan", email = "bnv2103@cumc.columbia.edu", role = c("fnd"), comment = c(ORCID = "0000-0002-5560-4085"))
   )

@@ -3,7 +3,7 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   introduction: introduction.html
-last_built: 2026-02-24T04:33Z
+last_built: 2026-03-11T18:16Z
 urls:
   reference: https://alexliyihao.github.io/mirrorstoolkit_r/reference
   article: https://alexliyihao.github.io/mirrorstoolkit_r/articles
