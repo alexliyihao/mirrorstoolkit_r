@@ -46,4 +46,23 @@ distinguishable_palette = function(num_color, pre_specified_palette = NULL){
   return(palette_color)
 }
 
+#' Compute OR from effect size in logistic regression
+#'
+#' Generate an "Odd Ratio" columns from effect size, and put it after effect size
+#'
+#' @param data data.frame, the table work on
+#' @param effect_size_name str, the name of column of effect size
+#' @param odd_ratio_name str, the name of new column generated as odd ratio
+#'
+#' @return data.frame with an additional odds_ratio
+#' @export
+generate_odd_ratio = function(
+    data,
+    effect_size_name = "Effect Size",
+    odd_ratio_name = "Odd Ratio"){
+  data = data %>%
+    dplyr::mutate(!!rlang::sym(odd_ratio_name) := .data[[effect_size_name]] %>% base::exp()) %>%
+    dplyr::relocate(tidyr::all_of(odd_ratio_name), .after = tidyr::all_of(effect_size_name))
+  return(data)
+}
 
