@@ -10,7 +10,9 @@ OLS_wrapper(
   adjustments,
   variable_of_interest,
   by = NULL,
-  variable_of_interest_formal_name = NULL
+  variable_of_interest_formal_name = NULL,
+  with_power = FALSE,
+  variable_distribution = NULL
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ OLS_wrapper(
 \item{by}{str, the name of column of stratified variable in table data}
 
 \item{variable_of_interest_formal_name}{optional vector of str, the output names of interested variable in result}
+
+\item{with_power}{boolean, when set to TRUE, will call power.t.regression function computing the power and sample size at 80 percent power, default FALSE to save computation burden}
+
+\item{variable_distribution}{vector of str, either "normal" or "binary", the distribution of variable of interest specified, only necessary when with_power = TRUE, default "normal", should be 1-1 corresponding to variable of interest}
 }
 \value{
 data.frame, one variable in variable_of_interest as a row, with it's beta and p-value

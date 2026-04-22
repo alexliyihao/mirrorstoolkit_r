@@ -8,11 +8,19 @@
 \description{
 The code accumulated in the practice for most often used functionalities in biomedical studies.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://alexliyihao.github.io/mirrorstoolkit_r/}
+}
+
+}
 \author{
 \strong{Maintainer}: Yihao Li \email{alexliyihao@gmail.com} (\href{https://orcid.org/0009-0009-8722-3437}{ORCID})
 
 Other contributors:
 \itemize{
+  \item Nelsa Matienzo \email{nm3016@cumc.columbia.edu} (\href{https://orcid.org/0000-0002-8826-0311}{ORCID}) [reviewer, data contributor]
   \item Gissette Reyes-Soffer \email{gr2104@cumc.columbia.edu} (\href{https://orcid.org/0000-0002-6746-4569}{ORCID}) [funder]
   \item Badri Vardarajan \email{bnv2103@cumc.columbia.edu} (\href{https://orcid.org/0000-0002-5560-4085}{ORCID}) [funder]
 }

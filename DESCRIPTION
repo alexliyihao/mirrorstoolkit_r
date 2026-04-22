@@ -33,7 +33,8 @@ Imports:
     scales,
     Hmisc,
     ggcorrplot,
-    plotly
+    plotly,
+    pwrss
 RoxygenNote: 7.3.3
 Suggests:
     knitr,

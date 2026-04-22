@@ -4,7 +4,15 @@
 \alias{logistic_regression}
 \title{Logistics Linear Regression}
 \usage{
-logistic_regression(data, variable, response, adjustments, mode = "table")
+logistic_regression(
+  data,
+  variable,
+  response,
+  adjustments,
+  mode = "table",
+  with_power = FALSE,
+  variable_distribution = "normal"
+)
 }
 \arguments{
 \item{data}{data.frame the table working on}
@@ -16,6 +24,10 @@ logistic_regression(data, variable, response, adjustments, mode = "table")
 \item{adjustments}{vector of str, the list of adjustment variables in the table data}
 
 \item{mode}{str, when "summary", only output the coefficient corresponding to column specified in variable}
+
+\item{with_power}{boolean, when set to TRUE, will call pwrss.z.logreg function computing the power and sample size at 80 percent power, default FALSE to save computation burden}
+
+\item{variable_distribution}{str, either "normal" or "binary", the distribution of variable of interest specified, only necessary when with_power = TRUE, default "normal"}
 }
 \value{
 data.frame, if mode summary, only the beta and p-value(z-value) for variable specified in "variable", otherwise the general summary()

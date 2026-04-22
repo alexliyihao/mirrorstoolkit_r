@@ -534,6 +534,18 @@ mirrorstoolkit::logistic_wrapper(
   )
 ```
 
+```{r}
+mirrorstoolkit::logistic_wrapper(
+  data = df, 
+  response = "Calciphylaxis",
+  adjustments = adjustments,
+  variable_of_interest = variable_list,
+  variable_of_interest_formal_name = variable_list_formal,
+  with_power = TRUE,
+  variable_distribution = c("normal", "normal", "normal", "normal", "normal")
+  )
+```
+
 ## Ordinary Linear Regression
 
 The setting is similar, let's generate a continuous target variable:
@@ -559,6 +571,18 @@ mirrorstoolkit::OLS_wrapper(
   variable_of_interest_formal_name = variable_list_formal
 )
 ```
+```{r}
+mirrorstoolkit::OLS_wrapper(
+  data = df_disease,
+  response = "duration_before_diagnosis",
+  adjustments = adjustments,
+  variable_of_interest = variable_list,
+  variable_of_interest_formal_name = variable_list_formal,
+  with_power = TRUE,
+  variable_distribution = c("normal","normal","normal","normal","normal")
+)
+```
+
 # Summarize association studies
 
 ## Manhattan Plot
