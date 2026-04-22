@@ -2,6 +2,7 @@
 
 ``` r
 library(dplyr)
+#> Warning: package 'dplyr' was built under R version 4.4.3
 #> 
 #> Attaching package: 'dplyr'
 #> The following objects are masked from 'package:stats':
@@ -901,6 +902,259 @@ mirrorstoolkit::logistic_wrapper(
 #> Lp(a) nmol/L, 2-logged  0.014135081 1.014235454 0.94323132
 ```
 
+``` r
+mirrorstoolkit::logistic_wrapper(
+  data = df, 
+  response = "Calciphylaxis",
+  adjustments = adjustments,
+  variable_of_interest = variable_list,
+  variable_of_interest_formal_name = variable_list_formal,
+  with_power = TRUE,
+  variable_distribution = c("normal", "normal", "normal", "normal", "normal")
+  )
+#> +--------------------------------------------------+
+#> |                POWER CALCULATION                 |
+#> +--------------------------------------------------+
+#> 
+#> Logistic Regression Coefficient (Wald's Z-Test)
+#> 
+#>   Method          : Demidenko (Variance Corrected)
+#>   Predictor Dist. : Normal
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : Odds Ratio = 1
+#>   H1 (Alt. Claim) : Odds Ratio != 1
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size          = 52
+#>   Type 1 Error (alpha) = 0.050
+#>   Type 2 Error (beta)  = 0.970
+#>   Statistical Power    = 0.03  <<
+#> 
+#> +--------------------------------------------------+
+#> |             SAMPLE SIZE CALCULATION              |
+#> +--------------------------------------------------+
+#> 
+#> Logistic Regression Coefficient (Wald's Z-Test)
+#> 
+#>   Method          : Demidenko (Variance Corrected)
+#>   Predictor Dist. : Normal
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : Odds Ratio = 1
+#>   H1 (Alt. Claim) : Odds Ratio != 1
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size          = 243311  <<
+#>   Type 1 Error (alpha) = 0.050
+#>   Type 2 Error (beta)  = 0.200
+#>   Statistical Power    = 0.8
+#> 
+#> +--------------------------------------------------+
+#> |                POWER CALCULATION                 |
+#> +--------------------------------------------------+
+#> 
+#> Logistic Regression Coefficient (Wald's Z-Test)
+#> 
+#>   Method          : Demidenko (Variance Corrected)
+#>   Predictor Dist. : Normal
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : Odds Ratio = 1
+#>   H1 (Alt. Claim) : Odds Ratio != 1
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size          = 52
+#>   Type 1 Error (alpha) = 0.050
+#>   Type 2 Error (beta)  = 0.948
+#>   Statistical Power    = 0.052  <<
+#> 
+#> +--------------------------------------------------+
+#> |             SAMPLE SIZE CALCULATION              |
+#> +--------------------------------------------------+
+#> 
+#> Logistic Regression Coefficient (Wald's Z-Test)
+#> 
+#>   Method          : Demidenko (Variance Corrected)
+#>   Predictor Dist. : Normal
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : Odds Ratio = 1
+#>   H1 (Alt. Claim) : Odds Ratio != 1
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size          = 26460  <<
+#>   Type 1 Error (alpha) = 0.050
+#>   Type 2 Error (beta)  = 0.200
+#>   Statistical Power    = 0.8
+#> 
+#> +--------------------------------------------------+
+#> |                POWER CALCULATION                 |
+#> +--------------------------------------------------+
+#> 
+#> Logistic Regression Coefficient (Wald's Z-Test)
+#> 
+#>   Method          : Demidenko (Variance Corrected)
+#>   Predictor Dist. : Normal
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : Odds Ratio = 1
+#>   H1 (Alt. Claim) : Odds Ratio != 1
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size          = 56
+#>   Type 1 Error (alpha) = 0.050
+#>   Type 2 Error (beta)  = 0.911
+#>   Statistical Power    = 0.089  <<
+#> 
+#> +--------------------------------------------------+
+#> |             SAMPLE SIZE CALCULATION              |
+#> +--------------------------------------------------+
+#> 
+#> Logistic Regression Coefficient (Wald's Z-Test)
+#> 
+#>   Method          : Demidenko (Variance Corrected)
+#>   Predictor Dist. : Normal
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : Odds Ratio = 1
+#>   H1 (Alt. Claim) : Odds Ratio != 1
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size          = 1244  <<
+#>   Type 1 Error (alpha) = 0.050
+#>   Type 2 Error (beta)  = 0.200
+#>   Statistical Power    = 0.8
+#> 
+#> +--------------------------------------------------+
+#> |                POWER CALCULATION                 |
+#> +--------------------------------------------------+
+#> 
+#> Logistic Regression Coefficient (Wald's Z-Test)
+#> 
+#>   Method          : Demidenko (Variance Corrected)
+#>   Predictor Dist. : Normal
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : Odds Ratio = 1
+#>   H1 (Alt. Claim) : Odds Ratio != 1
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size          = 54
+#>   Type 1 Error (alpha) = 0.050
+#>   Type 2 Error (beta)  = 0.950
+#>   Statistical Power    = 0.05  <<
+#> 
+#> +--------------------------------------------------+
+#> |             SAMPLE SIZE CALCULATION              |
+#> +--------------------------------------------------+
+#> 
+#> Logistic Regression Coefficient (Wald's Z-Test)
+#> 
+#>   Method          : Demidenko (Variance Corrected)
+#>   Predictor Dist. : Normal
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : Odds Ratio = 1
+#>   H1 (Alt. Claim) : Odds Ratio != 1
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size          = 101680  <<
+#>   Type 1 Error (alpha) = 0.050
+#>   Type 2 Error (beta)  = 0.200
+#>   Statistical Power    = 0.8
+#> 
+#> +--------------------------------------------------+
+#> |                POWER CALCULATION                 |
+#> +--------------------------------------------------+
+#> 
+#> Logistic Regression Coefficient (Wald's Z-Test)
+#> 
+#>   Method          : Demidenko (Variance Corrected)
+#>   Predictor Dist. : Normal
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : Odds Ratio = 1
+#>   H1 (Alt. Claim) : Odds Ratio != 1
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size          = 54
+#>   Type 1 Error (alpha) = 0.050
+#>   Type 2 Error (beta)  = 0.949
+#>   Statistical Power    = 0.051  <<
+#> 
+#> +--------------------------------------------------+
+#> |             SAMPLE SIZE CALCULATION              |
+#> +--------------------------------------------------+
+#> 
+#> Logistic Regression Coefficient (Wald's Z-Test)
+#> 
+#>   Method          : Demidenko (Variance Corrected)
+#>   Predictor Dist. : Normal
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : Odds Ratio = 1
+#>   H1 (Alt. Claim) : Odds Ratio != 1
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size          = 49642  <<
+#>   Type 1 Error (alpha) = 0.050
+#>   Type 2 Error (beta)  = 0.200
+#>   Statistical Power    = 0.8
+#>                         Effect Size   Odd Ratio    P-value current power
+#> Albumin                -5.170826684 0.005679871 0.00327561    0.03017726
+#> Calcium                 0.833885757 2.302247357 0.11224877    0.05158879
+#> LDL(calc) mg/dL         0.006642994 1.006665108 0.61218217    0.08874263
+#> wIS                     0.003948747 1.003956554 0.95723792    0.05045103
+#> Lp(a) nmol/L, 2-logged  0.014135081 1.014235454 0.94323132    0.05091651
+#>                        n_observations 80%_power_size
+#> Albumin                            52         243311
+#> Calcium                            52          26460
+#> LDL(calc) mg/dL                    56           1244
+#> wIS                                54         101680
+#> Lp(a) nmol/L, 2-logged             54          49642
+```
+
 ### Ordinary Linear Regression
 
 The setting is similar, let’s generate a continuous target variable:
@@ -938,6 +1192,229 @@ mirrorstoolkit::OLS_wrapper(
 #> LDL(calc) mg/dL         0.08337316 0.749217682
 #> wIS                    -1.01676960 0.442564703
 #> Lp(a) nmol/L, 2-logged  0.51243742 0.906371748
+```
+
+``` r
+mirrorstoolkit::OLS_wrapper(
+  data = df_disease,
+  response = "duration_before_diagnosis",
+  adjustments = adjustments,
+  variable_of_interest = variable_list,
+  variable_of_interest_formal_name = variable_list_formal,
+  with_power = TRUE,
+  variable_distribution = c("normal","normal","normal","normal","normal")
+)
+#> +--------------------------------------------------+
+#> |                POWER CALCULATION                 |
+#> +--------------------------------------------------+
+#> 
+#> Linear Regression Coefficient (T-Test)
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : beta - null.beta = 0 
+#>   H1 (Alt. Claim) : beta - null.beta != 0 
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size            = 27
+#>   Type 1 Error (alpha)   = 0.050
+#>   Type 2 Error           = 0.772
+#>   Statistical Power      = 0.228  <<
+#> 
+#> +--------------------------------------------------+
+#> |             SAMPLE SIZE CALCULATION              |
+#> +--------------------------------------------------+
+#> 
+#> Linear Regression Coefficient (T-Test)
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : beta - null.beta = 0 
+#>   H1 (Alt. Claim) : beta - null.beta != 0 
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size            = 131  <<
+#>   Type 1 Error (alpha)   = 0.050
+#>   Type 2 Error           = 0.198
+#>   Statistical Power      = 0.802
+#> Warning: `r.squared` is possibly larger.
+#> +--------------------------------------------------+
+#> |                POWER CALCULATION                 |
+#> +--------------------------------------------------+
+#> 
+#> Linear Regression Coefficient (T-Test)
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : beta - null.beta = 0 
+#>   H1 (Alt. Claim) : beta - null.beta != 0 
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size            = 27
+#>   Type 1 Error (alpha)   = 0.050
+#>   Type 2 Error           = 0.000
+#>   Statistical Power      = 1  <<
+#> Warning: `r.squared` is possibly larger.
+#> +--------------------------------------------------+
+#> |             SAMPLE SIZE CALCULATION              |
+#> +--------------------------------------------------+
+#> 
+#> Linear Regression Coefficient (T-Test)
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : beta - null.beta = 0 
+#>   H1 (Alt. Claim) : beta - null.beta != 0 
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size            = 14  <<
+#>   Type 1 Error (alpha)   = 0.050
+#>   Type 2 Error           = 0.098
+#>   Statistical Power      = 0.902
+#> 
+#> +--------------------------------------------------+
+#> |                POWER CALCULATION                 |
+#> +--------------------------------------------------+
+#> 
+#> Linear Regression Coefficient (T-Test)
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : beta - null.beta = 0 
+#>   H1 (Alt. Claim) : beta - null.beta != 0 
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size            = 27
+#>   Type 1 Error (alpha)   = 0.050
+#>   Type 2 Error           = 0.922
+#>   Statistical Power      = 0.078  <<
+#> 
+#> +--------------------------------------------------+
+#> |             SAMPLE SIZE CALCULATION              |
+#> +--------------------------------------------------+
+#> 
+#> Linear Regression Coefficient (T-Test)
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : beta - null.beta = 0 
+#>   H1 (Alt. Claim) : beta - null.beta != 0 
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size            = 775  <<
+#>   Type 1 Error (alpha)   = 0.050
+#>   Type 2 Error           = 0.200
+#>   Statistical Power      = 0.8
+#> 
+#> +--------------------------------------------------+
+#> |                POWER CALCULATION                 |
+#> +--------------------------------------------------+
+#> 
+#> Linear Regression Coefficient (T-Test)
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : beta - null.beta = 0 
+#>   H1 (Alt. Claim) : beta - null.beta != 0 
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size            = 26
+#>   Type 1 Error (alpha)   = 0.050
+#>   Type 2 Error           = 0.823
+#>   Statistical Power      = 0.177  <<
+#> 
+#> +--------------------------------------------------+
+#> |             SAMPLE SIZE CALCULATION              |
+#> +--------------------------------------------------+
+#> 
+#> Linear Regression Coefficient (T-Test)
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : beta - null.beta = 0 
+#>   H1 (Alt. Claim) : beta - null.beta != 0 
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size            = 174  <<
+#>   Type 1 Error (alpha)   = 0.050
+#>   Type 2 Error           = 0.198
+#>   Statistical Power      = 0.802
+#> 
+#> +--------------------------------------------------+
+#> |                POWER CALCULATION                 |
+#> +--------------------------------------------------+
+#> 
+#> Linear Regression Coefficient (T-Test)
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : beta - null.beta = 0 
+#>   H1 (Alt. Claim) : beta - null.beta != 0 
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size            = 26
+#>   Type 1 Error (alpha)   = 0.050
+#>   Type 2 Error           = 0.945
+#>   Statistical Power      = 0.055  <<
+#> 
+#> +--------------------------------------------------+
+#> |             SAMPLE SIZE CALCULATION              |
+#> +--------------------------------------------------+
+#> 
+#> Linear Regression Coefficient (T-Test)
+#> 
+#> ---------------------------------------------------
+#> Hypotheses
+#> ---------------------------------------------------
+#>   H0 (Null Claim) : beta - null.beta = 0 
+#>   H1 (Alt. Claim) : beta - null.beta != 0 
+#> 
+#> ---------------------------------------------------
+#> Results
+#> ---------------------------------------------------
+#>   Sample Size            = 4078  <<
+#>   Type 1 Error (alpha)   = 0.050
+#>   Type 2 Error           = 0.200
+#>   Statistical Power      = 0.8
+#>                        Effect Size     P-value current power n_observations
+#> Albumin                 9.38512237 0.419285024    0.22837201             27
+#> Calcium                23.95816412 0.004014825    0.99992770             27
+#> LDL(calc) mg/dL         0.08337316 0.749217682    0.07848074             27
+#> wIS                    -1.01676960 0.442564703    0.17692901             26
+#> Lp(a) nmol/L, 2-logged  0.51243742 0.906371748    0.05509955             26
+#>                        80%_power_size
+#> Albumin                           131
+#> Calcium                            14
+#> LDL(calc) mg/dL                   775
+#> wIS                               174
+#> Lp(a) nmol/L, 2-logged           4078
 ```
 
 ## Summarize association studies
@@ -979,7 +1456,7 @@ mirrorstoolkit::manhattan_plot(
 )
 ```
 
-![](introduction_files/figure-html/unnamed-chunk-38-1.png) It’s also
+![](introduction_files/figure-html/unnamed-chunk-40-1.png) It’s also
 okay for single phenotype, with another p-value threshold
 
 ``` r
@@ -994,7 +1471,7 @@ mirrorstoolkit::manhattan_plot(
 )
 ```
 
-![](introduction_files/figure-html/unnamed-chunk-39-1.png)
+![](introduction_files/figure-html/unnamed-chunk-41-1.png)
 
 ### Directed Acyclic Graph for multi-omics data
 

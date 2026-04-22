@@ -47,7 +47,9 @@
 <span>  <span class="va">adjustments</span>,</span>
 <span>  by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  variable_of_interest <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  variable_of_interest_formal_name <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  variable_of_interest_formal_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  with_power <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  variable_distribution <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -77,6 +79,14 @@
 
 <dt id="arg-variable-of-interest-formal-name">variable_of_interest_formal_name<a class="anchor" aria-label="anchor" href="#arg-variable-of-interest-formal-name"></a></dt>
 <dd><p>vector of str, the output names of interested variable in result</p></dd>
+
+
+<dt id="arg-with-power">with_power<a class="anchor" aria-label="anchor" href="#arg-with-power"></a></dt>
+<dd><p>boolean, when set to TRUE, will call pwrss.z.logreg function computing the power and sample size at 80 percent power, default FALSE to save computation burden</p></dd>
+
+
+<dt id="arg-variable-distribution">variable_distribution<a class="anchor" aria-label="anchor" href="#arg-variable-distribution"></a></dt>
+<dd><p>vector of str, either "normal" or "binary", the distribution of variable of interest specified, only necessary when with_power = TRUE, default "normal", should be 1-1 corresponding to variable of interest</p></dd>
 
 </dl></div>
     <div class="section level2">

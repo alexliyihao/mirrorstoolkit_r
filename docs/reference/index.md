@@ -37,6 +37,8 @@
   : Characteristics for non-normality distributed variable
 - [`generate_continuous_sd_output()`](https://alexliyihao.github.io/mirrorstoolkit_r/reference/generate_continuous_sd_output.md)
   : Characteristics for normality distributed variable
+- [`generate_odd_ratio()`](https://alexliyihao.github.io/mirrorstoolkit_r/reference/generate_odd_ratio.md)
+  : Compute OR from effect size in logistic regression
 - [`inspect_distribution()`](https://alexliyihao.github.io/mirrorstoolkit_r/reference/inspect_distribution.md)
   : Wrapper quickly check the distribution from Shapiro-Wilk test and
   visualization

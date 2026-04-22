@@ -5,7 +5,15 @@ A wrapper creating linear regression formula and clean the output
 ## Usage
 
 ``` r
-linear_regression(data, variable, response, adjustments, mode = "table")
+linear_regression(
+  data,
+  variable,
+  response,
+  adjustments,
+  mode = "table",
+  with_power = FALSE,
+  variable_distribution = "normal"
+)
 ```
 
 ## Arguments
@@ -30,6 +38,18 @@ linear_regression(data, variable, response, adjustments, mode = "table")
 
   str, when "summary", only output the coefficient corresponding to
   column specified in variable
+
+- with_power:
+
+  boolean, when set to TRUE, will call power.t.regression function
+  computing the power and sample size at 80 percent power, default FALSE
+  to save computation burden
+
+- variable_distribution:
+
+  str, either "normal" or "binary", the distribution of variable of
+  interest specified, only necessary when with_power = TRUE, default
+  "normal"
 
 ## Value
 

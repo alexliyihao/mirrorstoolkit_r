@@ -12,7 +12,9 @@ logistic_wrapper(
   adjustments,
   by = NULL,
   variable_of_interest = NULL,
-  variable_of_interest_formal_name = NULL
+  variable_of_interest_formal_name = NULL,
+  with_power = FALSE,
+  variable_distribution = NULL
 )
 ```
 
@@ -42,6 +44,18 @@ logistic_wrapper(
 - variable_of_interest_formal_name:
 
   vector of str, the output names of interested variable in result
+
+- with_power:
+
+  boolean, when set to TRUE, will call pwrss.z.logreg function computing
+  the power and sample size at 80 percent power, default FALSE to save
+  computation burden
+
+- variable_distribution:
+
+  vector of str, either "normal" or "binary", the distribution of
+  variable of interest specified, only necessary when with_power = TRUE,
+  default "normal", should be 1-1 corresponding to variable of interest
 
 ## Value
 
