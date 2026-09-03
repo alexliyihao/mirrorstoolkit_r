@@ -894,12 +894,23 @@ mirrorstoolkit::logistic_wrapper(
   variable_of_interest = variable_list,
   variable_of_interest_formal_name = variable_list_formal
   )
-#>                         Effect Size   Odd Ratio    P-value
-#> Albumin                -5.170826684 0.005679871 0.00327561
-#> Calcium                 0.833885757 2.302247357 0.11224877
-#> LDL(calc) mg/dL         0.006642994 1.006665108 0.61218217
-#> wIS                     0.003948747 1.003956554 0.95723792
-#> Lp(a) nmol/L, 2-logged  0.014135081 1.014235454 0.94323132
+#> Waiting for profiling to be done...
+#> Waiting for profiling to be done...
+#> Waiting for profiling to be done...
+#> Waiting for profiling to be done...
+#> Waiting for profiling to be done...
+#>                         Effect Size    P-value          OR     CI_lower
+#> Albumin                -5.170826684 0.00327561 0.005679871 7.082483e-05
+#> Calcium                 0.833885757 0.11224877 2.302247357 8.555642e-01
+#> LDL(calc) mg/dL         0.006642994 0.61218217 1.006665108 9.809422e-01
+#> wIS                     0.003948747 0.95723792 1.003956554 8.684047e-01
+#> Lp(a) nmol/L, 2-logged  0.014135081 0.94323132 1.014235454 6.866449e-01
+#>                          CI_upper
+#> Albumin                0.09105325
+#> Calcium                7.22348900
+#> LDL(calc) mg/dL        1.03400175
+#> wIS                    1.16442735
+#> Lp(a) nmol/L, 2-logged 1.52284475
 ```
 
 ``` r
@@ -912,6 +923,7 @@ mirrorstoolkit::logistic_wrapper(
   with_power = TRUE,
   variable_distribution = c("normal", "normal", "normal", "normal", "normal")
   )
+#> Waiting for profiling to be done...
 #> +--------------------------------------------------+
 #> |                POWER CALCULATION                 |
 #> +--------------------------------------------------+
@@ -957,7 +969,7 @@ mirrorstoolkit::logistic_wrapper(
 #>   Type 1 Error (alpha) = 0.050
 #>   Type 2 Error (beta)  = 0.200
 #>   Statistical Power    = 0.8
-#> 
+#> Waiting for profiling to be done...
 #> +--------------------------------------------------+
 #> |                POWER CALCULATION                 |
 #> +--------------------------------------------------+
@@ -1003,7 +1015,7 @@ mirrorstoolkit::logistic_wrapper(
 #>   Type 1 Error (alpha) = 0.050
 #>   Type 2 Error (beta)  = 0.200
 #>   Statistical Power    = 0.8
-#> 
+#> Waiting for profiling to be done...
 #> +--------------------------------------------------+
 #> |                POWER CALCULATION                 |
 #> +--------------------------------------------------+
@@ -1049,7 +1061,7 @@ mirrorstoolkit::logistic_wrapper(
 #>   Type 1 Error (alpha) = 0.050
 #>   Type 2 Error (beta)  = 0.200
 #>   Statistical Power    = 0.8
-#> 
+#> Waiting for profiling to be done...
 #> +--------------------------------------------------+
 #> |                POWER CALCULATION                 |
 #> +--------------------------------------------------+
@@ -1095,7 +1107,7 @@ mirrorstoolkit::logistic_wrapper(
 #>   Type 1 Error (alpha) = 0.050
 #>   Type 2 Error (beta)  = 0.200
 #>   Statistical Power    = 0.8
-#> 
+#> Waiting for profiling to be done...
 #> +--------------------------------------------------+
 #> |                POWER CALCULATION                 |
 #> +--------------------------------------------------+
@@ -1141,18 +1153,18 @@ mirrorstoolkit::logistic_wrapper(
 #>   Type 1 Error (alpha) = 0.050
 #>   Type 2 Error (beta)  = 0.200
 #>   Statistical Power    = 0.8
-#>                         Effect Size   Odd Ratio    P-value current power
-#> Albumin                -5.170826684 0.005679871 0.00327561    0.03017726
-#> Calcium                 0.833885757 2.302247357 0.11224877    0.05158879
-#> LDL(calc) mg/dL         0.006642994 1.006665108 0.61218217    0.08874263
-#> wIS                     0.003948747 1.003956554 0.95723792    0.05045103
-#> Lp(a) nmol/L, 2-logged  0.014135081 1.014235454 0.94323132    0.05091651
-#>                        n_observations 80%_power_size
-#> Albumin                            52         243311
-#> Calcium                            52          26460
-#> LDL(calc) mg/dL                    56           1244
-#> wIS                                54         101680
-#> Lp(a) nmol/L, 2-logged             54          49642
+#>                         Effect Size    P-value          OR     CI_lower
+#> Albumin                -5.170826684 0.00327561 0.005679871 7.082483e-05
+#> Calcium                 0.833885757 0.11224877 2.302247357 8.555642e-01
+#> LDL(calc) mg/dL         0.006642994 0.61218217 1.006665108 9.809422e-01
+#> wIS                     0.003948747 0.95723792 1.003956554 8.684047e-01
+#> Lp(a) nmol/L, 2-logged  0.014135081 0.94323132 1.014235454 6.866449e-01
+#>                          CI_upper current power n_observations 80%_power_size
+#> Albumin                0.09105325    0.03017726             52         243311
+#> Calcium                7.22348900    0.05158879             52          26460
+#> LDL(calc) mg/dL        1.03400175    0.08874263             56           1244
+#> wIS                    1.16442735    0.05045103             54         101680
+#> Lp(a) nmol/L, 2-logged 1.52284475    0.05091651             54          49642
 ```
 
 ### Ordinary Linear Regression
@@ -1186,12 +1198,12 @@ mirrorstoolkit::OLS_wrapper(
   variable_of_interest = variable_list,
   variable_of_interest_formal_name = variable_list_formal
 )
-#>                        Effect Size     P-value
-#> Albumin                 9.38512237 0.419285024
-#> Calcium                23.95816412 0.004014825
-#> LDL(calc) mg/dL         0.08337316 0.749217682
-#> wIS                    -1.01676960 0.442564703
-#> Lp(a) nmol/L, 2-logged  0.51243742 0.906371748
+#>                        Effect Size     P-value      CI_low    CI_high
+#> Albumin                 9.38512237 0.419285024 -14.5364160 33.3066608
+#> Calcium                23.95816412 0.004014825   8.7522454 39.1640829
+#> LDL(calc) mg/dL         0.08337316 0.749217682  -0.4580232  0.6247695
+#> wIS                    -1.01676960 0.442564703  -3.7542535  1.7207144
+#> Lp(a) nmol/L, 2-logged  0.51243742 0.906371748  -8.5785753  9.6034501
 ```
 
 ``` r
@@ -1403,18 +1415,18 @@ mirrorstoolkit::OLS_wrapper(
 #>   Type 1 Error (alpha)   = 0.050
 #>   Type 2 Error           = 0.200
 #>   Statistical Power      = 0.8
-#>                        Effect Size     P-value current power n_observations
-#> Albumin                 9.38512237 0.419285024    0.22837201             27
-#> Calcium                23.95816412 0.004014825    0.99992770             27
-#> LDL(calc) mg/dL         0.08337316 0.749217682    0.07848074             27
-#> wIS                    -1.01676960 0.442564703    0.17692901             26
-#> Lp(a) nmol/L, 2-logged  0.51243742 0.906371748    0.05509955             26
-#>                        80%_power_size
-#> Albumin                           131
-#> Calcium                            14
-#> LDL(calc) mg/dL                   775
-#> wIS                               174
-#> Lp(a) nmol/L, 2-logged           4078
+#>                        Effect Size     P-value      CI_low    CI_high
+#> Albumin                 9.38512237 0.419285024 -14.5364160 33.3066608
+#> Calcium                23.95816412 0.004014825   8.7522454 39.1640829
+#> LDL(calc) mg/dL         0.08337316 0.749217682  -0.4580232  0.6247695
+#> wIS                    -1.01676960 0.442564703  -3.7542535  1.7207144
+#> Lp(a) nmol/L, 2-logged  0.51243742 0.906371748  -8.5785753  9.6034501
+#>                        current power n_observations 80%_power_size
+#> Albumin                   0.22837201             27            131
+#> Calcium                   0.99992770             27             14
+#> LDL(calc) mg/dL           0.07848074             27            775
+#> wIS                       0.17692901             26            174
+#> Lp(a) nmol/L, 2-logged    0.05509955             26           4078
 ```
 
 ## Summarize association studies

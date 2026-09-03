@@ -35,6 +35,12 @@ linear_regression = function(
     return(output %>% summary())
   }
   result = (output %>% summary())$coefficients %>% as.data.frame()
+  ci <- stats::confint(output, level = 0.95)
+  output_with_CI = result[variable, c("Estimate", "Pr(>|t|)")] %>%
+    cbind(
+      CI_lower = ci[variable, 1],
+      CI_upper = ci[variable, 2]
+    )
   if (with_power == TRUE){
     # prepare the distribution for power analysis
     cleaned_result = broom::glance(output)
@@ -71,13 +77,13 @@ linear_regression = function(
       power = 0.80,
       ceiling = TRUE)
     return(c(
-      result[variable,c("Estimate", "Pr(>|t|)")],
+      output_with_CI,
       current_power$power,
       nobs,
       size_at_eighty_pct$n))
   }
   else{
-    return(result[variable,c("Estimate", "Pr(>|t|)")])
+    return(output_with_CI)
   }
 }
 
@@ -121,14 +127,14 @@ OLS_wrapper_ = function(
         keep_empty = TRUE
       ) %>%
       magrittr::set_colnames(
-        c("Effect Size", "P-value", "current power", "n_observations","80%_power_size")
+        c("Effect Size", "P-value", "CI_low", "CI_high", "current power", "n_observations","80%_power_size")
       ) %>%
       as.data.frame() %>%
       magrittr::set_rownames(variable_of_interest_formal_name)
   } else {
     result_table = result_table %>%
       magrittr::set_colnames(
-        c("Effect Size", "P-value")
+        c("Effect Size", "P-value", "CI_low", "CI_high")
       ) %>%
       magrittr::set_rownames(variable_of_interest_formal_name)
   }
@@ -232,6 +238,13 @@ logistic_regression = function(
     return(output %>% summary())
   }
   result = (output %>% summary())$coefficients %>% as.data.frame()
+  ci <- stats::confint(output, level = 0.95)
+  output_with_CI = result[variable, c("Estimate", "Pr(>|z|)")] %>%
+    cbind(
+      OR = exp(result[variable, "Estimate"]),
+      CI_lower = exp(ci[variable, 1]),
+      CI_upper = exp(ci[variable, 2])
+    )
   if (with_power == TRUE){
     # Compute correlation with other x for power analysis
     p0 = (data %>% dplyr::pull(response) %>% table() %>% prop.table())[2]
@@ -278,12 +291,12 @@ logistic_regression = function(
       power = 0.80,
       dist = dist_for_power)
     return(c(
-      result[variable,c("Estimate", "Pr(>|z|)")],
+      output_with_CI,
       current_power$power,
       nobs,
       (size_at_eighty_pct$n) %>% ceiling()))
   } else{
-    return(result[variable,c("Estimate", "Pr(>|z|)")])
+    return(output_with_CI)
   }
 }
 
@@ -327,14 +340,16 @@ logistic_wrapper_ = function(
         keep_empty = TRUE
         ) %>%
       magrittr::set_colnames(
-        c("Effect Size", "P-value", "current power", "n_observations","80%_power_size")
+        c("Effect Size", "P-value",
+          "OR", "CI_lower", "CI_upper",
+          "current power", "n_observations","80%_power_size")
         ) %>%
       as.data.frame() %>%
       magrittr::set_rownames(variable_of_interest_formal_name)
   } else {
     result_table = result_table %>%
       magrittr::set_colnames(
-        c("Effect Size", "P-value")
+        c("Effect Size", "P-value","OR", "CI_lower", "CI_upper")
         ) %>%
       magrittr::set_rownames(variable_of_interest_formal_name)
   }
@@ -380,8 +395,8 @@ logistic_wrapper = function(
       variable_of_interest_formal_name = variable_of_interest_formal_name,
       with_power = with_power,
       variable_distribution = variable_distribution
-      ) %>%
-      generate_odd_ratio()
+      )# %>%
+      #generate_odd_ratio()
     return(output)
   }
   if (by %in% adjustments){
@@ -400,7 +415,7 @@ logistic_wrapper = function(
         variable_distribution = variable_distribution) %>%
         tibble::rownames_to_column("variable"),
       .keep = TRUE
-    ) %>%
-    generate_odd_ratio()
+    )# %>%
+    #generate_odd_ratio()
   return(output)
 }
